@@ -1,6 +1,8 @@
 // src/pages/auth/RegisterPage.jsx
 // Registration page with form for first name, last name, email, role selection, password, and confirm password. Validates input and shows error messages. On successful registration, redirects to login page with success message. Uses authAPI for registration request and react-hot-toast for notifications.
 //@author sshende
+
+
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authAPI } from '../../api/services'
@@ -10,9 +12,9 @@ import { UserPlus } from 'lucide-react'
 import styles from './Auth.module.css'
 
 const ROLES = [
-  { value:'student', label:'🎓 Student',  desc:'Apply to projects and internships' },
-  { value:'sponsor', label:'🏢 Sponsor',  desc:'Post projects and hire students' },
-  { value:'faculty', label:'📚 Faculty',  desc:'Post research and capstone projects' },
+  { value:'student', label:'Student',  desc:'Apply to projects and internships' },
+  { value:'sponsor', label:'Sponsor',  desc:'Post projects and hire students' },
+  { value:'faculty', label:'Faculty',  desc:'Post research and capstone projects' },
 ]
 
 export default function RegisterPage() {

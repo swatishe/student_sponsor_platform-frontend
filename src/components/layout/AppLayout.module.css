@@ -23,7 +23,7 @@
 .navbar {
   display: flex;
   align-items: stretch;     /* children fill the full 52px height */
-  height: 52px;
+  height: 65px;
   padding: 0 20px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
