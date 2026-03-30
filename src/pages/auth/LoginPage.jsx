@@ -1,6 +1,7 @@
 // src/pages/auth/LoginPage.jsx
 // Login page with email/password form, validation, and error handling. On successful login, redirects to dashboard. Provides link to registration page. Uses AuthContext for login function and state management.
 //@author sshende
+
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
@@ -27,7 +28,7 @@ export default function LoginPage() {
       navigate('/')
     } catch (err) {
       extractErrors(err).forEach(m => toast.error(m))
-    } finally { setLoading(false) }
+    } finally { setLoading(false) } 
   }
 
   return (
@@ -68,6 +69,14 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+            
+            {/* NOTE: Forgot password link - This will be uncommented once feature is implemented at the backend*/}
+            {/* <Link to="/forgot-password" className={styles.forgotLink}>
+              Forgot your password?
+            </Link> */}
+
+            <div style={{ height: 20 }} />
+
             <button type="submit" className={`btn btn-primary ${styles.submitBtn}`} disabled={loading}>
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
