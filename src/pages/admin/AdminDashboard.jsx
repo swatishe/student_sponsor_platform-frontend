@@ -1,4 +1,6 @@
 // src/pages/admin/AdminDashboard.jsx
+// Admin dashboard with platform stats and recent activity.
+// Shows total users, projects, and breakdown by role/status. Lists recent users and projects with links to manage them.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'

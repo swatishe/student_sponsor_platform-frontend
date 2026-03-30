@@ -3,6 +3,10 @@
    Global design tokens, resets, and utility classes.
    All CSS variables are defined here and consumed everywhere.
    ============================================================ */
+/* 
+  This file defines the global styles for the student sponsor platform frontend. It includes CSS variables for colors, typography, spacing, and other design tokens that ensure a consistent look and feel across the application. It also contains reset styles to normalize default browser styling and utility classes for common layout patterns like containers, cards, buttons, badges, forms, and grids. Additionally, it defines responsive behavior for certain elements and a page enter animation for smooth transitions between pages.
+  @author sshende
+*/
 
 :root {
   /* ── Palette ── */

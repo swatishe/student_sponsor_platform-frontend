@@ -1,4 +1,9 @@
 /* src/pages/student/Projects.module.css */
+/* CSS module for the student projects page, defining styles for the toolbar, search input, filter checkboxes, project cards, and responsive behavior. */
+/*
+  Student projects page with a toolbar containing a search input and filter checkboxes. Below the toolbar is a grid of project cards, each showing the project title, meta information (sponsor, location, tags), and a link to view more details. Uses flexbox for the toolbar layout and CSS grid for the project cards. Cards have hover effects for interactivity. The search input has an icon and padding. Filter checkboxes are styled with custom labels. The layout is responsive, with the toolbar wrapping on smaller screens and the project cards adjusting to fit the screen width.
+  @author sshende
+*/
 .toolbar { display:flex; gap:12px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
 .searchWrap { position:relative; flex:1; min-width:240px; }
 .searchIcon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none; }

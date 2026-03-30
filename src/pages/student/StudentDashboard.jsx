@@ -1,4 +1,5 @@
 // src/pages/student/StudentDashboard.jsx
+// Student dashboard page — shows a welcome message, key stats (open projects, applications, accepted offers), recent applications, and latest open projects. Fetches necessary data on mount and handles loading states. Provides links to view all applications and projects. Uses StatCard for stats, Badge for application status, and Spinner for loading state. Also formats dates using timeAgo helper.
 //@author sshende
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -33,7 +34,7 @@ export default function StudentDashboard() {
   return (
     <div className="page-enter">
       <div className="page-header">
-        <h1>Welcome back, {user?.first_name} 👋</h1>
+        <h1>Welcome, {user?.first_name} 👋</h1>
         <p>Here's a snapshot of your activity on the platform.</p>
       </div>
 

@@ -1,4 +1,5 @@
 // src/pages/auth/LoginPage.jsx
+// Login page with email/password form, validation, and error handling. On successful login, redirects to dashboard. Provides link to registration page. Uses AuthContext for login function and state management.
 //@author sshende
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -22,7 +23,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(form.email, form.password)
-      toast.success('Welcome back!')
+      toast.success('Welcome!')
       navigate('/')
     } catch (err) {
       extractErrors(err).forEach(m => toast.error(m))

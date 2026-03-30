@@ -1,5 +1,7 @@
 // src/pages/sponsor/SponsorDashboard.jsx
 // Layout — proper grid alignment and spacing.
+// Shows key stats (total projects, open/closed count, total applicants) and a table of recent projects with status badges and quick links to manage applications.
+//@author sshende
 
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'

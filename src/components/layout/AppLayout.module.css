@@ -1,5 +1,11 @@
 /* src/components/layout/AppLayout.module.css                    */
-/* LinkedIn-style horizontal navbar with icon + label nav items  */
+/* Top navbar with logo left, icon + label nav items center, Me avatar right. */
+/*
+  Responsive: on mobile, nav items hidden and replaced with hamburger toggle that opens dropdown with nav + profile + logout.
+  Page content rendered via <Outlet />. Uses React Router for navigation and context for auth state.
+  @author sshende
+*/
+
 
 /* ─────────────────────────────────────────────────────────────
    PAGE SHELL

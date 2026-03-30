@@ -1,4 +1,5 @@
 // src/pages/sponsor/ApplicationsReview.jsx
+// Page for sponsors to review applications for a specific project. Shows applicant info, cover letter, and status. Allows changing application status and messaging applicants directly.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -11,7 +12,7 @@ import { ArrowLeft, MessageSquare, CheckCircle, XCircle, Eye } from 'lucide-reac
 import { timeAgo } from '../../utils/helpers'
 
 const STATUS_OPTIONS = ['','pending','reviewing','accepted','rejected']
-
+// Note: This page is accessed by sponsors from the project details page when they click on the "View Applications" button. The URL includes the project ID, which is used to fetch the relevant applications for that project. Sponsors can then review each application, see the applicant's information and cover letter, and update the application status or message the applicant directly from this interface.
 export default function ApplicationsReview() {
   const { id }       = useParams()
   const navigate     = useNavigate()
@@ -46,7 +47,7 @@ export default function ApplicationsReview() {
     <div className="page-enter">
       <button onClick={() => navigate(-1)} className="btn btn-secondary" style={{ marginBottom:20 }}><ArrowLeft size={16}/>Back</button>
       <div className="page-header">
-        <h1>Applicants — {project?.title}</h1>
+        <h1>Applicants - {project?.title}</h1>
         <p>{apps.length} total applicant{apps.length!==1?'s':''}</p>
       </div>
       {/* Status filter pills */}

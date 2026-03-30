@@ -1,5 +1,7 @@
 // src/context/AuthContext.jsx
 // Global authentication state provider.
+// Provides user info, login/logout functions, and role-based flags. On mount, checks localStorage for tokens and tries to restore session.
+// Uses React Context to make auth state accessible throughout the app. Handles token storage and session restoration.
 //@author sshende
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { authAPI } from '../api/services'

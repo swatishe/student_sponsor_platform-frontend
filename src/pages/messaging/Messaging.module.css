@@ -1,4 +1,9 @@
 /* src/pages/messaging/Messaging.module.css */
+/* CSS module for the messaging page, defining styles for the container, sidebar, chat panel, message bubbles, input bar, and responsive behavior. */
+/*
+  Messaging page with a sidebar listing conversations and a main chat panel. The sidebar shows conversation names, last message preview, and unread badge. The chat panel displays messages in bubbles aligned left or right based on sender, with timestamps. An input bar at the bottom allows sending new messages. Uses flexbox for layout and media queries for mobile responsiveness. On mobile, the sidebar is hidden and a back button is shown in the chat panel to return to the conversation list.
+  @author sshende
+*/
 
 .container {
   display: flex;

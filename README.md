@@ -1,16 +1,65 @@
-# React + Vite
+# Student Sponsor Platform — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Overview
+Frontend for the Student Sponsor Platform (SSP). Provides UI for students, sponsors, and faculty to interact with the system.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
+- React (Vite)
+- Axios
+- React Router
+- WebSockets
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Local Setup
+
+### 1. Clone Repository
+git clone <repo-url>
+cd frontend
+
+### 2. Install Dependencies
+npm install
+
+### 3. Configure Environment Variables (.env)
+VITE_API_URL=http://localhost:8000
+VITE_WS_URL=ws://localhost:8000
+
+### 4. Run Development Server
+npm run dev
+
+---
+
+## Local URL
+http://localhost:5173
+
+---
+
+## Build
+npm run build
+
+Output folder: dist/
+
+---
+
+## Deployment (Vercel)
+
+### Steps
+1. Push code to GitHub
+2. Import project in Vercel
+3. Add environment variables:
+   VITE_API_URL=https://your-backend.onrender.com
+   VITE_WS_URL=wss://your-backend.onrender.com
+4. Deploy
+
+---
+
+## Notes
+- Backend must be running for API calls
+- Ensure CORS is configured correctly
+- WebSocket requires valid authentication token

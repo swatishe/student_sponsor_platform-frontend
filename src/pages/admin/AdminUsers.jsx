@@ -1,4 +1,5 @@
 // src/pages/admin/AdminUsers.jsx
+// Admin user management page: list all users with search and role filter. Admins can deactivate/reactivate or delete users. Shows user info, role badge, and status.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../../api/services'

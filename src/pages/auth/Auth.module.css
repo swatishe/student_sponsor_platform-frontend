@@ -1,4 +1,9 @@
 /* src/pages/auth/Auth.module.css */
+/* CSS module for authentication pages (login/signup), defining styles for the layout, panels, forms, and responsive behavior. */
+/*
+  Auth page with two panels: left side has a welcome message and decorative elements, right side has the login/signup form. Uses CSS Grid for layout and media queries for responsiveness. Form inputs have icons and show/hide password functionality. Role selection cards for signup. Styled buttons and links for actions.
+  @author sshende
+*/
 .authPage { display:flex; min-height:100vh; }
 
 .panel {

@@ -1,4 +1,5 @@
 // src/pages/auth/RegisterPage.jsx
+// Registration page with form for first name, last name, email, role selection, password, and confirm password. Validates input and shows error messages. On successful registration, redirects to login page with success message. Uses authAPI for registration request and react-hot-toast for notifications.
 //@author sshende
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -39,7 +40,7 @@ export default function RegisterPage() {
       <div className={styles.panel}>
         <div className={styles.panelContent}>
           <h1>Join the<br/>Platform</h1>
-          <p>Students, sponsors, and faculty — all in one place to collaborate on meaningful projects.</p>
+          <p>Students, sponsors, and faculty - all in one place to collaborate on meaningful projects.</p>
           <div className={styles.dots}><span/><span/><span/></div>
         </div>
       </div>

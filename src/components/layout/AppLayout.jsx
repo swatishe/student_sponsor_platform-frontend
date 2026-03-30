@@ -1,5 +1,7 @@
 // src/components/layout/AppLayout.jsx
-// LinkedIn-style top navbar: logo left, icon+label nav center, Me avatar right.
+// Top navbar: logo left, icon+label nav center, Me avatar right.
+// Mobile: hamburger toggles dropdown with nav + profile + logout.
+// Page content rendered via <Outlet />. Uses React Router for navigation and context for auth state.
 // @author sshende
 
 import { useState, useRef, useEffect } from 'react'
@@ -14,7 +16,6 @@ import { roleColor, initials } from '../../utils/helpers'
 import styles from './AppLayout.module.css'
 
 // Nav items per role — Profile is intentionally removed from here
-// It lives under the "Me" dropdown (LinkedIn pattern)
 const NAV = {
   student: [
     { to: '/student/dashboard',    icon: LayoutDashboard, label: 'Dashboard' },
@@ -92,7 +93,7 @@ export default function AppLayout() {
           <span className={styles.logoText}>SSP</span>
         </div>
 
-        {/* Desktop nav: icon above label (LinkedIn style) */}
+        {/* Desktop nav: icon above label*/}
         <nav className={styles.navLinks} aria-label="Main navigation">
           {navItems.map(({ to, icon: Icon, label }) => (
             <NavLink
