@@ -1,4 +1,5 @@
 // src/pages/sponsor/ProjectForm.jsx — shared create/edit form for sponsors + faculty
+// Form for creating or editing a project. If an ID is present in the URL params, it loads the existing project data for editing; otherwise, it initializes an empty form for creating a new project. The form includes fields for title, description, requirements, project type, status, tags, deadline, and payment details. On submission, it calls the appropriate API endpoint to create or update the project and shows success/error toasts based on the response. After saving, it navigates back to the projects list page.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -27,12 +28,12 @@ export default function ProjectForm() {
       setForm({ title:data.title||'', description:data.description||'', requirements:data.requirements||'', project_type:data.project_type||'internship', status:data.status||'open', is_paid:data.is_paid||false, stipend:data.stipend||'', tags:data.tags||'', max_applicants:data.max_applicants||0, deadline:data.deadline||'' })
     }).finally(() => setLoading(false))
   }, [id, isEdit])
-
+// Note: The onChange handler updates the form state whenever an input changes. It handles both text inputs and checkboxes by checking the input type and updating the state accordingly.
   const onChange = (e) => {
     const { name, value, type, checked } = e.target
     setForm(p => ({ ...p, [name]: type==='checkbox' ? checked : value }))
   }
-
+// Note: The form includes fields for title, description, requirements, project type, status, tags, deadline, and payment details. On submission, it calls the appropriate API endpoint to create or update the project and shows success/error toasts based on the response. After saving, it navigates back to the projects list page.
   const onSubmit = async (e) => {
     e.preventDefault(); setSaving(true)
     try {

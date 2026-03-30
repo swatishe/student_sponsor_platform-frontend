@@ -1,4 +1,6 @@
 // Proxies /api and /ws to Django during development.
+// In production, the frontend is served by Django, so no proxy is needed.
+// @author sshende
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'

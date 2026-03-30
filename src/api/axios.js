@@ -1,9 +1,10 @@
-import axios from 'axios'
-
+// Axios instance with base URL, JWT attach, and auto-refresh on 401.
 // In production: VITE_API_URL = https://ssp-backend.onrender.com
 // In development: empty = use Vite proxy
-// Axios instance with base URL, JWT attach, and auto-refresh on 401.
 // @author sshende
+
+import axios from 'axios'
+
 const BASE_URL = import.meta.env.VITE_API_URL || ''
 
 const api = axios.create({

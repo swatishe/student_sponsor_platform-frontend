@@ -1,4 +1,5 @@
 // src/pages/faculty/FacultyDashboard.jsx
+// Faculty dashboard showing stats and recent projects. Allows posting new projects and managing existing ones.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
@@ -8,7 +9,7 @@ import StatCard from '../../components/common/StatCard'
 import Spinner from '../../components/common/Spinner'
 import Badge from '../../components/common/Badge'
 import { Plus, Briefcase, Users, ArrowRight } from 'lucide-react'
-
+// Note: Faculty can post research and capstone projects for students. The dashboard shows the number of projects they've posted and total applicants across those projects. Recent projects are listed with their title, type, applicant count, and status badge. Links provided to manage all projects and view applicants for each project.
 export default function FacultyDashboard() {
   const { user }    = useAuth()
   const [projects, setProjects] = useState([])

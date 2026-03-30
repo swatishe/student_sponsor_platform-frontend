@@ -1,4 +1,5 @@
 // src/pages/student/MyApplications.jsx
+// Student "My Applications" page: lists all projects the student has applied to, showing project title, application status, date applied, and options to view the project or withdraw the application if it's still pending/reviewing. Fetches data from the API on component mount and handles loading and empty states gracefully.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
@@ -10,6 +11,7 @@ import toast from 'react-hot-toast'
 import { FileText, ExternalLink, Trash2, Calendar } from 'lucide-react'
 import { timeAgo } from '../../utils/helpers'
 
+// Note: The handleWithdraw function allows students to withdraw their application if it's still pending or under review. It prompts for confirmation before making the API call to withdraw the application and then refreshes the list of applications to reflect the change.
 export default function MyApplications() {
   const [applications, setApplications] = useState([])
   const [loading, setLoading]           = useState(true)
@@ -26,6 +28,7 @@ export default function MyApplications() {
     try { await applicationAPI.withdraw(id); toast.success('Withdrawn.'); fetchApps() }
     catch { toast.error('Failed to withdraw.') }
   }
+  // Note: The page displays a list of applications with the project title, application status (using badges), date applied, and a truncated version of the cover letter if available. Each application has buttons to view the project details and to withdraw the application if it's still pending or under review. If there are no applications, it shows an empty state with a call to action to browse projects.
 
   if (loading) return <Spinner text="Loading applications…"/>
 

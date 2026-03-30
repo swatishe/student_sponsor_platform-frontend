@@ -1,4 +1,5 @@
 // src/pages/student/ProjectsPage.jsx
+// Student projects listing page: shows a searchable, filterable list of all available projects. Each project card displays the title, type, sponsor, location, tags, and application count. Students can click on a project to view more details and apply. The page fetches project data from the API with support for search and filters, and handles loading and empty states gracefully.
 //@author sshende
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'

@@ -1,5 +1,6 @@
 // src/pages/messaging/MessagingPage.jsx
 // Real-time chat using WebSocket (with REST fallback).
+// Shows list of conversations, message history, and input for new messages. Updates in real-time when new messages arrive. Uses messagingAPI for REST calls and WebSocket for live updates. Handles conversation selection and message sending.
 //@author sshende
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'

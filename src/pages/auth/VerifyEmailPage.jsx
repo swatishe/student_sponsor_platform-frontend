@@ -1,5 +1,7 @@
 // src/pages/auth/VerifyEmailPage.jsx
 // Handles the email verification link: /verify-email?token=<uuid>
+// On mount, extracts the token from the URL and calls the API to verify it. Shows loading state while waiting, then success or error message based on the response. Provides a link to login or register after verification.
+//@author sshende
 
 import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
@@ -7,6 +9,7 @@ import { authAPI } from '../../api/services'
 import { CheckCircle, XCircle, Loader } from 'lucide-react'
 import styles from './Auth.module.css'
 
+// Note: This page is accessed via a link sent to the user's email after registration. The backend generates a unique token and sends it in the verification email. When the user clicks the link, this page verifies the token with the backend and updates the user's email verification status.
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams()
   const token          = searchParams.get('token')

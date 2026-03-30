@@ -1,5 +1,6 @@
 // src/pages/sponsor/SponsorProfile.jsx
 // Sponsor profile page — company info, industry, website, description.
+//@author sshende
 
 import { useState, useEffect } from 'react'
 import { profileAPI } from '../../api/services'

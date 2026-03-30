@@ -1,5 +1,5 @@
 /* src/pages/sponsor/SponsorDashboard.module.css */
-
+/* CSS module for the Sponsor Dashboard page, defining styles for the page header, stats grid, stat cards, project table, and responsive behavior. */ 
 /* Page header: title left, button right */
 .pageHeader {
   display: flex;

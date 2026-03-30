@@ -1,5 +1,6 @@
 // src/App.jsx
 // Root component — AuthProvider + all route definitions.
+// Uses React Router for client-side routing and wraps everything in the AuthProvider to provide authentication state throughout the app. Defines a PrivateRoute component to protect routes that require authentication and role-based access. The AppRoutes component contains all the route definitions for public and protected pages, including dashboards, project listings, profile pages, and messaging. The HomeRedirect component redirects authenticated users to their respective dashboards based on their role.
 //@author sshende
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'

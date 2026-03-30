@@ -1,4 +1,5 @@
 // src/pages/sponsor/ManageProjects.jsx
+// Sponsor projects management page: lists all projects posted by the sponsor, with options to edit or delete each project. Shows project title, type, applicant count, and status. Provides a link to create a new project.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'

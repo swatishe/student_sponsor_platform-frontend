@@ -1,4 +1,5 @@
 // src/pages/student/StudentProfile.jsx
+// Student profile page — shows the student's info and allows them to edit their profile details like bio, skills, academic info, and links. Fetches the current profile data on mount and populates a form. Handles form submission to update the profile via the API. Shows loading states and success/error toasts based on the API response. Uses Avatar for the profile picture, Spinner for loading state, and standard form elements for input.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { profileAPI } from '../../api/services'

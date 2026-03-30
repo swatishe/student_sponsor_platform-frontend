@@ -1,7 +1,7 @@
-// src/api/services.js
+// Service layer for all API calls, using the configured Axios instance with auth + error handling
 // All API service calls organised by domain with verifyEmail + resendVerification to authAPI
 //@author sshende
-
+// Note: All API calls return the full Axios response. Callers can access response.data for the payload or handle errors with try/catch.
 import api from './axios'
 
 // ── Auth ────────────────────────────────────────────────────────────────

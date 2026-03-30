@@ -1,4 +1,5 @@
 // src/pages/student/ProjectDetailPage.jsx
+// Project detail page for students — shows full project info, sponsor details, and options to apply or message the sponsor. Fetches project data on mount and handles loading and error states. If the student has already applied, it shows the application status instead of the apply button. Also includes a form for submitting a cover letter when applying.
 //@author sshende
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -28,6 +29,7 @@ export default function ProjectDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
+// Note: The handleApply function is called when the student submits their application. It sends the project ID and cover letter to the API and updates the UI based on the response. If the application is successful, it shows a success toast and updates the state to reflect that the student has applied. If there's an error, it shows an error toast with the message from the API if available.
   const handleApply = async () => {
     setApplying(true)
     try {
@@ -38,7 +40,7 @@ export default function ProjectDetailPage() {
       toast.error(err.response?.data?.detail || 'Failed to apply.')
     } finally { setApplying(false) }
   }
-
+// Note: The handleMessage function allows the student to start a conversation with the sponsor or faculty member who posted the project. It uses the messaging API to create a new conversation and then navigates the student to the messaging page for that conversation. If there's an error starting the conversation, it shows an error toast.
   const handleMessage = async () => {
     if (!project?.created_by?.id) return
     try {

@@ -1,4 +1,5 @@
 // src/main.jsx — Vite/React entry point
+// Sets up the React app, wrapping it in BrowserRouter for routing and Toaster for notifications. Renders the App component, which contains all the route definitions and page components. Also imports global styles from index.css.
 //@author sshende
 import React from 'react'
 import ReactDOM from 'react-dom/client'

@@ -1,4 +1,7 @@
+
 /* src/components/common/Spinner.module.css */
+/* CSS module for Spinner component, defining styles for the loading spinner and its container. */
+
 
 .wrap {
   display: flex;
