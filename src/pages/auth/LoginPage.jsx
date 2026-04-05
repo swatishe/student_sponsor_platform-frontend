@@ -71,9 +71,9 @@ export default function LoginPage() {
             </div>
             
             {/* NOTE: Forgot password link - This will be uncommented once feature is implemented at the backend*/}
-            {/* <Link to="/forgot-password" className={styles.forgotLink}>
+            <Link to="/forgot-password" className={styles.forgotLink}>
               Forgot your password?
-            </Link> */}
+            </Link>
 
             <div style={{ height: 20 }} />
 
