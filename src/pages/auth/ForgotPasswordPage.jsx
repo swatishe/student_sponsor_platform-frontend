@@ -1,133 +1,188 @@
 // src/pages/auth/ForgotPasswordPage.jsx
-// Step 1 of password reset: user enters email, receives reset link.
+//
+// Route:  /forgot-password
+// Flow:   User enters email → backend sends reset link → show confirmation.
+//
+// API:    POST /api/v1/users/password-reset/  { email }
+//         Always returns 200 (anti-enumeration — never reveals if email exists).
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { authAPI } from '../../api/services'
-import { Mail, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react'
 import styles from './Auth.module.css'
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail]       = useState('')
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState('')
-  const [sent, setSent]         = useState(false)
+  const [email,   setEmail]   = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error,   setError]   = useState('')
+  const [sent,    setSent]    = useState(false)   // true → show confirmation card
 
-  const onSubmit = async (e) => {
+  // ── submit ──────────────────────────────────────────────────────────────
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!email.trim()) { setError('Please enter your email address.'); return }
-    if (!/\S+@\S+\.\S+/.test(email)) { setError('Please enter a valid email address.'); return }
+
+    const trimmed = email.trim()
+    if (!trimmed) {
+      setError('Please enter your email address.')
+      return
+    }
+    if (!/\S+@\S+\.\S+/.test(trimmed)) {
+      setError('Please enter a valid email address.')
+      return
+    }
 
     setLoading(true)
     setError('')
 
     try {
-      await authAPI.requestPasswordReset(email)
-      setSent(true)
+      await authAPI.requestPasswordReset(trimmed)
+      setSent(true)                    // always show success
     } catch (err) {
-      // Always show success even if email not found — prevents email enumeration
-      // Only show error on server/network failure
+      // Only show error for network failures or 5xx — never for 4xx
+      // (backend always returns 200; this branch is rare)
       if (!err?.response || err.response.status >= 500) {
         setError('Server error. Please try again in a moment.')
       } else {
-        setSent(true)  // 400 still shows success (user may not exist — security)
+        setSent(true)                  // treat any 4xx as success too
       }
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <div className={styles.authPage}>
-      <div className={styles.panel}>
-        <div className={styles.panelContent}>
-          <div className={styles.panelBrand}>
-            {/* <div className={styles.panelLogo}>S</div> */}
-            <div>
-              <div className={styles.panelBrandName}>Student Sponsor Platform</div>
-              {/* <div className={styles.panelBrandSub}>Connecting talent with opportunity</div> */}
-            </div>
-          </div>
-          <h1 className={styles.panelHeading}>
-            Reset your<br/><span>password.</span>
-          </h1>
-          <p className={styles.panelDesc}>
-            Enter your registered email address and we'll send you a secure link to reset your password.
-          </p>
-        </div>
-      </div>
+  // ── confirmation card ────────────────────────────────────────────────────
+  if (sent) {
+    return (
+      <div className={styles.authPage}>
+        <LeftPanel
+          heading={<>Check your<br /><span>email.</span></>}
+          sub="If an account is registered with that address, the reset link is on its way."
+        />
 
-      <div className={styles.formSide}>
-        <div className={styles.formBox}>
-
-          <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 28, transition: 'color 0.15s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
-            <ArrowLeft size={15} /> Back to Sign In
-          </Link>
-
-          {sent ? (
-            <div className={styles.verifyNotice}>
-              <div className={styles.verifyNoticeIcon}>
-                <CheckCircle size={28} />
+        <div className={styles.formSide}>
+          <div className={styles.formBox}>
+            <div className={styles.noticeCard}>
+              <div className={styles.noticeIcon} style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--accent-success)' }}>
+                ✉️
               </div>
-              <h2 className={styles.verifyNoticeTitle}>Reset link sent!</h2>
-              <p className={styles.verifyNoticeText}>
-                If an account exists for <strong style={{ color: 'var(--gold)' }}>{email}</strong>, you'll receive a password reset link within a few minutes.
+              <h2 className={styles.noticeTitle}>Reset link sent!</h2>
+              <p className={styles.noticeText}>
+                We sent an email to{' '}
+                <strong style={{ color: 'var(--gold)' }}>{email.trim()}</strong>
+                {' '}with a password reset link.
               </p>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                Check your spam folder if it doesn't arrive.
+              <p className={styles.noticeHint}>
+                Didn't receive it? Check your spam folder. The link expires in 1 hour.
               </p>
               <Link to="/login" className="btn btn-primary" style={{ marginTop: 8 }}>
                 Back to Sign In
               </Link>
             </div>
-          ) : (
-            <>
-              <div className={styles.formHeader}>
-                <h2 className={styles.formTitle}>Forgot password?</h2>
-                <p className={styles.formSubtitle}>Enter your email and we'll send a reset link.</p>
-              </div>
-
-              {error && (
-                <div className="alert alert-error" role="alert">
-                  <AlertCircle size={16} className="alert-icon" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <form onSubmit={onSubmit} noValidate>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="reset-email">Email Address</label>
-                  <div className={styles.inputWrap}>
-                    <Mail size={16} className={styles.inputIcon} />
-                    <input
-                      id="reset-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value); setError('') }}
-                      placeholder="      you@university.edu"
-                      autoComplete="email"
-                      autoFocus
-                      className={`form-input ${styles.inputWithIcon} ${error ? 'error' : ''}`}
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
-
-                <button type="submit" className={`btn btn-primary btn-lg ${styles.submitBtn}`} disabled={loading}>
-                  {loading
-                    ? <><span style={{ width:16, height:16, border:'2px solid rgba(26,39,68,0.4)', borderTopColor:'var(--navy-dark)', borderRadius:'50%', animation:'spin 0.7s linear infinite', display:'inline-block' }}/> Sending…</>
-                    : 'Send Reset Link'
-                  }
-                </button>
-              </form>
-            </>
-          )}
+          </div>
         </div>
       </div>
+    )
+  }
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  // ── request form ─────────────────────────────────────────────────────────
+  return (
+    <div className={styles.authPage}>
+      <LeftPanel
+        heading={<>Forgot your<br /><span>password?</span></>}
+        sub="No worries. Enter your email and we'll send you a reset link instantly."
+      />
+
+      <div className={styles.formSide}>
+        <div className={styles.formBox}>
+
+          <Link to="/login" className={styles.backLink}>
+            ← Back to Sign In
+          </Link>
+
+          <div className={styles.formHeader}>
+            <h2 className={styles.formTitle}>Reset password</h2>
+            <p className={styles.formSubtitle}>
+              Enter the email you registered with.
+            </p>
+          </div>
+
+          {/* Inline error — persistent */}
+          {error && (
+            <div className={styles.inlineError} role="alert">
+              <span className={styles.inlineErrorIcon}>⚠</span>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} noValidate>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="fp-email">
+                Email Address
+              </label>
+              <input
+                id="fp-email"
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setError('') }}
+                placeholder="you@university.edu"
+                autoComplete="email"
+                autoFocus
+                className={`${styles.input} ${error ? styles.inputError : ''}`}
+                disabled={loading}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={loading}
+            >
+              {loading ? <Spinner /> : 'Send Reset Link'}
+            </button>
+          </form>
+
+          <p className={styles.switchText}>
+            Remembered it?{' '}
+            <Link to="/login">Sign in →</Link>
+          </p>
+
+        </div>
+      </div>
     </div>
+  )
+}
+
+// ── Shared sub-components ────────────────────────────────────────────────────
+
+function LeftPanel({ heading, sub }) {
+  return (
+    <div className={styles.panel}>
+      <div className={styles.panelContent}>
+        <div className={styles.panelBrand}>
+          <div>
+            <div className={styles.panelBrandName}>Student Sponsor Platform</div>
+            <div className={styles.panelBrandSub}>Connecting talent with opportunity</div>
+          </div>
+        </div>
+        <h1 className={styles.panelHeading}>{heading}</h1>
+        <p className={styles.panelDesc}>{sub}</p>
+      </div>
+    </div>
+  )
+}
+
+function Spinner() {
+  return (
+    <>
+      <span style={{
+        width: 16, height: 16, borderRadius: '50%',
+        border: '2px solid rgba(17,27,51,0.3)',
+        borderTopColor: '#111b33',
+        display: 'inline-block',
+        animation: 'fp-spin 0.7s linear infinite',
+      }} />
+      Sending…
+      <style>{`@keyframes fp-spin { to { transform: rotate(360deg); } }`}</style>
+    </>
   )
 }
