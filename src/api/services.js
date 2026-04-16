@@ -10,10 +10,15 @@ export const authAPI = {
   login:          (email, password)  => api.post('/api/v1/auth/login/', { email, password }),
   logout:         (refresh)          => api.post('/api/v1/auth/logout/', { refresh }),
   getMe:          ()                 => api.get('/api/v1/users/me/'),
-  changePassword: (data)             => api.post('/api/v1/users/change-password/', data),
+  changePassword:       (data)            => api.post('/api/v1/users/change-password/', data),
+
   // Email verification
-  verifyEmail:          (token)  => api.get(`/api/v1/users/verify-email/?token=${token}`),
-  resendVerification:   ()       => api.post('/api/v1/users/resend-verification/'),
+  verifyEmail:        (token) => api.get(`/api/v1/users/verify-email/?token=${token}`),
+  resendVerification: (email) => api.post('/api/v1/users/resend-verification/', { email }),
+
+  // Forgot / reset password
+  requestPasswordReset: (email) => api.post('/api/v1/users/password-reset/', { email }),
+  resetPassword:        (data)  => api.post('/api/v1/users/password-reset/confirm/', data),
 }
 
 // ── Profiles ────────────────────────────────────────────────────────────

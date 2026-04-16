@@ -21,6 +21,8 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const [form, setForm]     = useState({ first_name:'', last_name:'', email:'', role:'student', password:'', password2:'' })
   const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+  const [resendState, setResend] = useState('idle')
 
   const onChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
 
@@ -30,12 +32,46 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await authAPI.register(form)
-      toast.success('Account created! Please log in.')
-      navigate('/login')
+      // toast.success('Account created! Please log in.')
+      // navigate('/login')
+      setDone(true)
     } catch (err) {
       extractErrors(err).forEach(m => toast.error(m))
     } finally { setLoading(false) }
   }
+  const handleResend = async () => {
+  setResend('sending')
+  try {
+    await authAPI.resendVerification(form.email)
+    setResend('sent')
+  } catch {
+    setResend('error')
+  }
+}
+if (done) {
+  return (
+    <div className={styles.authPage}>
+      <div className={styles.formSide}>
+        <div className={styles.formBox}>
+          <h2>Check your email</h2>
+          <p>We sent a verification link to <b>{form.email}</b></p>
+
+          <p>
+            Didn’t get it?{' '}
+            {resendState === 'idle' && (
+              <button onClick={handleResend}>Resend</button>
+            )}
+            {resendState === 'sending' && 'Sending...'}
+            {resendState === 'sent' && ' Sent'}
+            {resendState === 'error' && 'Error. Try again'}
+          </p>
+
+          <Link to="/login">Go to Login</Link>
+        </div>
+      </div>
+    </div>
+  )
+}
 
   return (
     <div className={styles.authPage}>
