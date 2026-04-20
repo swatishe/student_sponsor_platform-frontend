@@ -64,4 +64,7 @@ export const adminAPI = {
   getUsers:   (role)     => api.get('/api/v1/users/admin/users/', { params: role ? { role } : {} }),
   updateUser: (id, data) => api.patch(`/api/v1/users/admin/users/${id}/`, data),
   deleteUser: (id)       => api.delete(`/api/v1/users/admin/users/${id}/`),
+  getProjects:     (params = {}) => api.get('/api/v1/admin/projects/', { params }),
+  deleteProject:   (id)          => api.delete(`/api/v1/admin/projects/${id}/`),
+  getActivityLogs: (params = {}) => api.get('/api/v1/admin/activity-logs/', { params }),
 }

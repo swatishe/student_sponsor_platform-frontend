@@ -39,6 +39,8 @@ import FacultyProjects  from './pages/faculty/FacultyProjects'
 // Admin
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers     from './pages/admin/AdminUsers'
+import AdminProjects    from './pages/admin/AdminProjects'
+import AdminActivityLog from './pages/admin/AdminActivityLog'
 
 // Messaging
 import MessagingPage from './pages/messaging/MessagingPage'
@@ -101,6 +103,11 @@ function AppRoutes() {
         {/* Admin */}
         <Route path="/admin/dashboard" element={<PrivateRoute roles={['admin']}><AdminDashboard /></PrivateRoute>} />
         <Route path="/admin/users"     element={<PrivateRoute roles={['admin']}><AdminUsers /></PrivateRoute>} />
+        <Route path="/admin/projects"     element={<AdminProjects />} />
+        <Route path="activity-log" element={<AdminActivityLog />} />
+        
+
+
 
         {/* Messaging — all roles */}
         <Route path="/messages"          element={<MessagingPage />} />

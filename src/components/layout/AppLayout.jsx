@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard, Briefcase, FileText,
   MessageSquare, User, Users, LogOut,
-  Menu, X, ChevronDown,
+  Menu, X, ChevronDown, FolderOpen, ClipboardList,
 } from 'lucide-react'
 import { roleColor, initials } from '../../utils/helpers'
 import styles from './AppLayout.module.css'
@@ -36,6 +36,8 @@ const NAV = {
   admin: [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/users',     icon: Users,            label: 'Users' },
+    { to: '/admin/projects',     icon: FolderOpen,      label: 'Projects' },
+    { to: '/admin/activity-log', icon: ClipboardList,   label: 'Activity' },
     { to: '/messages',        icon: MessageSquare,    label: 'Messages' },
   ],
 }
