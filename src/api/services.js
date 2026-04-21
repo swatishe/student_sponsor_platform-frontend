@@ -68,3 +68,25 @@ export const adminAPI = {
   deleteProject:   (id)          => api.delete(`/api/v1/admin/projects/${id}/`),
   getActivityLogs: (params = {}) => api.get('/api/v1/admin/activity-logs/', { params }),
 }
+
+// ── Forum ─────────────────────────────────────────────────────────────────────
+export const forumAPI = {
+  // Threads
+  getThreads:    (params = {}) => api.get('/api/v1/forum/threads/', { params }),
+  getThread:     (id)          => api.get(`/api/v1/forum/threads/${id}/`),
+  createThread:  (data)        => api.post('/api/v1/forum/threads/', data),
+  updateThread:  (id, data)    => api.patch(`/api/v1/forum/threads/${id}/`, data),
+  deleteThread:  (id)          => api.delete(`/api/v1/forum/threads/${id}/`),
+
+  // Posts
+  getPosts:      (threadId)       => api.get(`/api/v1/forum/threads/${threadId}/posts/`),
+  createPost:    (threadId, data) => api.post(`/api/v1/forum/threads/${threadId}/posts/`, data),
+  updatePost:    (id, data)       => api.patch(`/api/v1/forum/posts/${id}/`, data),
+  deletePost:    (id)             => api.delete(`/api/v1/forum/posts/${id}/`),
+  flagPost:      (id)             => api.patch(`/api/v1/forum/posts/${id}/flag/`),
+
+  // Replies
+  getReplies:    (postId)       => api.get(`/api/v1/forum/posts/${postId}/replies/`),
+  createReply:   (postId, data) => api.post(`/api/v1/forum/posts/${postId}/replies/`, data),
+}
+

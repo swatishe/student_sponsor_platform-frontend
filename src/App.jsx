@@ -45,6 +45,12 @@ import AdminActivityLog from './pages/admin/AdminActivityLog'
 // Messaging
 import MessagingPage from './pages/messaging/MessagingPage'
 
+// Forum 
+import ForumPage        from './pages/forum/ForumPage'
+import NewThreadPage    from './pages/forum/NewThreadPage'
+import ThreadDetailPage from './pages/forum/ThreadDetailPage'
+
+
 // ── Guards ──────────────────────────────────────────────────────────────
 function PrivateRoute({ children, roles }) {
   const { user, loading } = useAuth()
@@ -104,14 +110,19 @@ function AppRoutes() {
         <Route path="/admin/dashboard" element={<PrivateRoute roles={['admin']}><AdminDashboard /></PrivateRoute>} />
         <Route path="/admin/users"     element={<PrivateRoute roles={['admin']}><AdminUsers /></PrivateRoute>} />
         <Route path="/admin/projects"     element={<AdminProjects />} />
-        <Route path="activity-log" element={<AdminActivityLog />} />
-        
-
+        <Route path="/admin/activity-log" element={<AdminActivityLog />} />
 
 
         {/* Messaging — all roles */}
         <Route path="/messages"          element={<MessagingPage />} />
         <Route path="/messages/:convId"  element={<MessagingPage />} />
+
+         {/* Forum — all roles */}
+        <Route path="/forum"     element={<ForumPage />} />   
+        <Route path="/forum/new" element={<PrivateRoute roles={['faculty', 'admin']}><NewThreadPage /></PrivateRoute>} />  
+        <Route path="/forum/:id" element={<ThreadDetailPage />} /> 
+
+
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
