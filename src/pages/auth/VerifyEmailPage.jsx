@@ -10,7 +10,7 @@
 // Also shows a resend-link form when token is not found or expired.
 // @author sshende
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef} from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { authAPI } from '../../api/services'
 import styles from './Auth.module.css'
@@ -23,7 +23,12 @@ export default function VerifyEmailPage() {
   const [email,    setEmail]    = useState('')
   const [resending, setResend]  = useState('idle')    // idle|sending|sent|error
 
+  const calledRef = useRef(false)   
+
   useEffect(() => {
+    if (calledRef.current) return  
+    calledRef.current = true       
+
     if (!token) {
       setStatus('invalid')
       return
