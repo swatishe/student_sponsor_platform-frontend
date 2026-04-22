@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard, Briefcase, FileText,
   MessageSquare, User, Users, LogOut,
-  Menu, X, ChevronDown, FolderOpen, ClipboardList,  MessagesSquare,
+  Menu, X, ChevronDown, FolderOpen, ClipboardList,  MessagesSquare, Bookmark,
 } from 'lucide-react'
 import { roleColor, initials } from '../../utils/helpers'
 import styles from './AppLayout.module.css'
@@ -23,6 +23,7 @@ const NAV = {
     { to: '/student/applications', icon: FileText,        label: 'Applications' },
     { to: '/messages',             icon: MessageSquare,   label: 'Messages' },
     { to: '/forum',                icon: MessagesSquare,  label: 'Forum' },
+    { to: '/student/saved', icon: Bookmark, label: 'Saved' }
 
   ],
   sponsor: [

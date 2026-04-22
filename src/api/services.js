@@ -42,6 +42,28 @@ export const projectAPI = {
   getMyProjects:  ()            => api.get('/api/v1/projects/mine/'),
 }
 
+
+// ── Saved Projects ────────────────────────────────────────────────────────────
+export const savedAPI = {
+  /** GET /api/v1/projects/saved/ — all saved projects for current student */
+  getSaved: () => api.get('/api/v1/projects/saved/'),
+
+  /**
+   * POST /api/v1/projects/<pk>/save/ — save a project
+   * Idempotent: calling again returns 200 { saved: true }
+   */
+  save: (projectId) => api.post(`/api/v1/projects/${projectId}/save/`),
+
+  /**
+   * DELETE /api/v1/projects/<pk>/save/ — unsave a project
+   * Idempotent: calling when not saved returns 200 { saved: false }
+   */
+  unsave: (projectId) => api.delete(`/api/v1/projects/${projectId}/save/`),
+
+  /** GET /api/v1/projects/<pk>/save/ — check if a single project is saved */
+  isSaved: (projectId) => api.get(`/api/v1/projects/${projectId}/save/`),
+}
+
 // ── Applications ─────────────────────────────────────────────────────────
 export const applicationAPI = {
   apply:                  (data)      => api.post('/api/v1/applications/', data),

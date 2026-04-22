@@ -23,6 +23,8 @@ import ProjectsPage      from './pages/student/ProjectsPage'
 import ProjectDetailPage from './pages/student/ProjectDetailPage'
 import MyApplications    from './pages/student/MyApplications'
 import StudentProfile    from './pages/student/StudentProfile'
+import SavedProjectsPage from './pages/student/SavedProjectsPage'
+
 
 // Sponsor
 import SponsorDashboard   from './pages/sponsor/SponsorDashboard'
@@ -35,6 +37,9 @@ import SponsorProfile from './pages/sponsor/SponsorProfile'
 // Faculty
 import FacultyDashboard from './pages/faculty/FacultyDashboard'
 import FacultyProjects  from './pages/faculty/FacultyProjects'
+import FacultyProfile            from './pages/faculty/FacultyProfile'                
+import FacultyApplicationsReview from './pages/faculty/FacultyApplicationsReview'    
+
 
 // Admin
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -90,6 +95,8 @@ function AppRoutes() {
         <Route path="/student/projects/:id"   element={<PrivateRoute roles={['student']}><ProjectDetailPage /></PrivateRoute>} />
         <Route path="/student/applications"   element={<PrivateRoute roles={['student']}><MyApplications /></PrivateRoute>} />
         <Route path="/student/profile"        element={<PrivateRoute roles={['student']}><StudentProfile /></PrivateRoute>} />
+        <Route path="/student/saved" element={<PrivateRoute roles={['student']}><SavedProjectsPage /></PrivateRoute>} />
+
 
         {/* Sponsor */}
         <Route path="/sponsor/dashboard"                   element={<PrivateRoute roles={['sponsor']}><SponsorDashboard /></PrivateRoute>} />
@@ -104,7 +111,8 @@ function AppRoutes() {
         <Route path="/faculty/projects"                element={<PrivateRoute roles={['faculty']}><FacultyProjects /></PrivateRoute>} />
         <Route path="/faculty/projects/new"            element={<PrivateRoute roles={['faculty']}><ProjectForm /></PrivateRoute>} />
         <Route path="/faculty/projects/:id/edit"       element={<PrivateRoute roles={['faculty']}><ProjectForm /></PrivateRoute>} />
-        <Route path="/faculty/projects/:id/applicants" element={<PrivateRoute roles={['faculty']}><ApplicationsReview /></PrivateRoute>} />
+        <Route path="/faculty/projects/:id/applicants" element={<PrivateRoute roles={['faculty']}><FacultyApplicationsReview /></PrivateRoute>} />
+        <Route path="/faculty/profile"                 element={<PrivateRoute roles={['faculty']}><FacultyProfile /></PrivateRoute>} />
 
         {/* Admin */}
         <Route path="/admin/dashboard" element={<PrivateRoute roles={['admin']}><AdminDashboard /></PrivateRoute>} />
