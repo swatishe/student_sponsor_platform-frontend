@@ -48,8 +48,386 @@
 
 .row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 
+
+/* ═══════════════════════════════════════════════════════════
+   FORGOT PASSWORD + RESET PASSWORD — additional classes
+═══════════════════════════════════════════════════════════ */
+
+/* ── Back link (← Back to Sign In) ─────────────────────── */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color 0.15s;
+}
+.backLink:hover { color: var(--gold); }
+
+/* ── Inline error banner ────────────────────────────────── */
+.inlineError {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(239,68,68,0.10);
+  border: 1px solid rgba(239,68,68,0.35);
+  border-radius: var(--radius-sm);
+  color: #fca5a5;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  animation: errIn 0.18s ease;
+}
+@keyframes errIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.inlineErrorIcon {
+  flex-shrink: 0;
+  font-style: normal;
+  margin-top: 1px;
+}
+
+/* ── Field (label + input wrapper) ─────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+/* ── Label ──────────────────────────────────────────────── */
+.label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ── Input ──────────────────────────────────────────────── */
+.input {
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  width: 100%;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+}
+.input:hover  { border-color: rgba(240,180,41,0.30); }
+.input:focus  {
+  border-color: var(--border-focus);
+  background: var(--bg-secondary);
+  box-shadow: 0 0 0 3px rgba(240,180,41,0.12);
+}
+.input::placeholder { color: var(--text-muted); font-size: 0.9rem; }
+.inputError {
+  border-color: var(--accent-danger) !important;
+}
+.inputError:focus {
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+}
+.inputHasToggle {
+  padding-right: 44px;
+}
+
+/* ── Password show/hide toggle ─────────────────────────── */
+.pwToggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 4px;
+  color: var(--text-muted);
+  transition: color 0.15s;
+}
+.pwToggle:hover { color: var(--text-primary); }
+
+/* ── Submit button (full-width) ─────────────────────────── */
+/* Note: .submitBtn already exists in the file for LoginPage.
+   These extra rules extend it — no duplicate needed if you
+   already have .submitBtn. Just ensure the class covers:   */
+.submitBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  background: var(--gold);
+  color: var(--navy-dark);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  margin-top: 4px;
+}
+.submitBtn:hover:not(:disabled) {
+  background: var(--gold-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(240,180,41,0.35);
+}
+.submitBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Notice card (success / error state) ───────────────── */
+.noticeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 36px 28px;
+  background: rgba(240,180,41,0.07);
+  border: 1px solid rgba(240,180,41,0.25);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.noticeIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(240,180,41,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.noticeTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.noticeText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 320px;
+  margin: 0;
+}
+
+.noticeHint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Secondary link below notice card ──────────────────── */
+.secondaryLink {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.secondaryLink:hover { color: var(--gold); }
+
+
 @media (max-width:860px) {
   .panel { display:none; }
   .roleGrid { grid-template-columns:1fr; }
   .row { grid-template-columns:1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   These are classes used by ForgotPasswordPage and ResetPasswordPage
+═══════════════════════════════════════════════════════════════ */
+
+/* Back link  ← Back to Sign In  */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: color 0.15s;
+}
+.backLink:hover { color: var(--accent-primary); }
+
+/* Persistent inline error banner */
+.inlineError {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(239,68,68,0.10);
+  border: 1px solid rgba(239,68,68,0.35);
+  border-radius: var(--radius-sm);
+  color: #fca5a5;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  animation: inlineErrIn 0.18s ease;
+}
+@keyframes inlineErrIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.inlineErrorIcon { flex-shrink: 0; margin-top: 1px; }
+
+/* Field wrapper (label + input) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+/* Label above inputs */
+.label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Standalone input (not using global .form-input) */
+.input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.input:hover  { border-color: rgba(108,99,255,0.4); }
+.input:focus  { border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(108,99,255,0.12); }
+.input::placeholder { color: var(--text-muted); }
+.inputError   { border-color: var(--accent-danger) !important; }
+.inputError:focus { box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important; }
+.inputHasToggle { padding-right: 44px; }
+
+/* Password show/hide button */
+.pwToggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-muted);
+  padding: 4px;
+  transition: color 0.15s;
+}
+.pwToggle:hover { color: var(--text-primary); }
+
+/* Notice/result card (success or error) */
+.noticeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 36px 28px;
+  background: rgba(108,99,255,0.07);
+  border: 1px solid rgba(108,99,255,0.2);
+  border-radius: var(--radius-lg, 16px);
+  text-align: center;
+}
+.noticeIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.noticeTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+.noticeText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 320px;
+  margin: 0;
+}
+.noticeHint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Muted link below notice cards */
+.secondaryLink {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.secondaryLink:hover { color: var(--accent-primary); }
+
+/* ── Part 2: Email verification notice (used in RegisterPage) ── */
+.verifyNotice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 24px;
+  background: rgba(108,99,255,0.07);
+  border: 1px solid rgba(108,99,255,0.2);
+  border-radius: var(--radius-lg, 16px);
+  text-align: center;
+  margin-top: 8px;
+}
+.verifyNoticeIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(108,99,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+.verifyNoticeTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.verifyNoticeText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 320px;
 }

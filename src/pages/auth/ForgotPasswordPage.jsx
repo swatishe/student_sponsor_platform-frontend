@@ -1,133 +1,142 @@
 // src/pages/auth/ForgotPasswordPage.jsx
-// Step 1 of password reset: user enters email, receives reset link.
+// Route:  /forgot-password
+// FIX:    LeftPanel uses panelContent h1/p — matches existing Auth.module.css
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { authAPI } from '../../api/services'
-import { Mail, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react'
 import styles from './Auth.module.css'
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail]       = useState('')
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState('')
-  const [sent, setSent]         = useState(false)
+  const [email,   setEmail]   = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error,   setError]   = useState('')
+  const [sent,    setSent]    = useState(false)
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!email.trim()) { setError('Please enter your email address.'); return }
-    if (!/\S+@\S+\.\S+/.test(email)) { setError('Please enter a valid email address.'); return }
+    const trimmed = email.trim()
+    if (!trimmed)                       { setError('Please enter your email address.'); return }
+    if (!/\S+@\S+\.\S+/.test(trimmed)) { setError('Please enter a valid email address.'); return }
 
     setLoading(true)
     setError('')
-
     try {
-      await authAPI.requestPasswordReset(email)
+      await authAPI.requestPasswordReset(trimmed)
       setSent(true)
     } catch (err) {
-      // Always show success even if email not found — prevents email enumeration
-      // Only show error on server/network failure
       if (!err?.response || err.response.status >= 500) {
         setError('Server error. Please try again in a moment.')
       } else {
-        setSent(true)  // 400 still shows success (user may not exist — security)
+        setSent(true)   // always show success for 4xx (anti-enumeration)
       }
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <div className={styles.authPage}>
-      <div className={styles.panel}>
-        <div className={styles.panelContent}>
-          <div className={styles.panelBrand}>
-            {/* <div className={styles.panelLogo}>S</div> */}
-            <div>
-              <div className={styles.panelBrandName}>Student Sponsor Platform</div>
-              {/* <div className={styles.panelBrandSub}>Connecting talent with opportunity</div> */}
+  // ── Confirmation card ─────────────────────────────────────────────────────
+  if (sent) {
+    return (
+      <div className={styles.authPage}>
+        <LeftPanel
+          heading="Check your email."
+          sub="If an account is registered with that address, the reset link is on its way."
+        />
+        <div className={styles.formSide}>
+          <div className={styles.formBox}>
+            <div className={styles.noticeCard}>
+              <div className={styles.noticeIcon} style={{ background:'rgba(34,197,94,0.12)', color:'var(--accent-success)' }}>✉️</div>
+              <h2 className={styles.noticeTitle}>Reset link sent!</h2>
+              <p className={styles.noticeText}>
+                We sent an email to{' '}
+                <strong style={{ color:'var(--accent-primary)' }}>{email.trim()}</strong>
+                {' '}with a password reset link.
+              </p>
+              <p className={styles.noticeHint}>Didn't receive it? Check your spam folder. The link expires in 1 hour.</p>
+              <Link to="/login" className="btn btn-primary" style={{ marginTop: 8 }}>Back to Sign In</Link>
             </div>
           </div>
-          <h1 className={styles.panelHeading}>
-            Reset your<br/><span>password.</span>
-          </h1>
-          <p className={styles.panelDesc}>
-            Enter your registered email address and we'll send you a secure link to reset your password.
-          </p>
         </div>
       </div>
+    )
+  }
 
+  // ── Request form ──────────────────────────────────────────────────────────
+  return (
+    <div className={styles.authPage}>
+      <LeftPanel
+        heading="Forgot your password?"
+        sub="Enter your email and we'll send a reset link instantly."
+      />
       <div className={styles.formSide}>
         <div className={styles.formBox}>
 
-          <Link to="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 28, transition: 'color 0.15s' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
-            <ArrowLeft size={15} /> Back to Sign In
-          </Link>
+          <Link to="/login" className={styles.backLink}>← Back to Sign In</Link>
 
-          {sent ? (
-            <div className={styles.verifyNotice}>
-              <div className={styles.verifyNoticeIcon}>
-                <CheckCircle size={28} />
-              </div>
-              <h2 className={styles.verifyNoticeTitle}>Reset link sent!</h2>
-              <p className={styles.verifyNoticeText}>
-                If an account exists for <strong style={{ color: 'var(--gold)' }}>{email}</strong>, you'll receive a password reset link within a few minutes.
-              </p>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                Check your spam folder if it doesn't arrive.
-              </p>
-              <Link to="/login" className="btn btn-primary" style={{ marginTop: 8 }}>
-                Back to Sign In
-              </Link>
+          <div className={styles.formHeader}>
+            <h2>Reset Password</h2>
+            <p>Enter the email you registered with.</p>
+          </div>
+
+          {error && (
+            <div className={styles.inlineError} role="alert">
+              <span className={styles.inlineErrorIcon}>⚠</span>
+              {error}
             </div>
-          ) : (
-            <>
-              <div className={styles.formHeader}>
-                <h2 className={styles.formTitle}>Forgot password?</h2>
-                <p className={styles.formSubtitle}>Enter your email and we'll send a reset link.</p>
-              </div>
-
-              {error && (
-                <div className="alert alert-error" role="alert">
-                  <AlertCircle size={16} className="alert-icon" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <form onSubmit={onSubmit} noValidate>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="reset-email">Email Address</label>
-                  <div className={styles.inputWrap}>
-                    <Mail size={16} className={styles.inputIcon} />
-                    <input
-                      id="reset-email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value); setError('') }}
-                      placeholder="      you@university.edu"
-                      autoComplete="email"
-                      autoFocus
-                      className={`form-input ${styles.inputWithIcon} ${error ? 'error' : ''}`}
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
-
-                <button type="submit" className={`btn btn-primary btn-lg ${styles.submitBtn}`} disabled={loading}>
-                  {loading
-                    ? <><span style={{ width:16, height:16, border:'2px solid rgba(26,39,68,0.4)', borderTopColor:'var(--navy-dark)', borderRadius:'50%', animation:'spin 0.7s linear infinite', display:'inline-block' }}/> Sending…</>
-                    : 'Send Reset Link'
-                  }
-                </button>
-              </form>
-            </>
           )}
+
+          <form onSubmit={handleSubmit} noValidate>
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="fp-email">Email Address</label>
+              <input
+                id="fp-email"
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setError('') }}
+                placeholder="you@university.edu"
+                autoComplete="email"
+                autoFocus
+                className={`${styles.input} ${error ? styles.inputError : ''}`}
+                disabled={loading}
+              />
+            </div>
+
+            <button type="submit" className={`btn btn-primary ${styles.submitBtn}`} disabled={loading}>
+              {loading ? <><Spinner />Sending…</> : 'Send Reset Link'}
+            </button>
+          </form>
+
+          <p className={styles.switchLink}>
+            Remembered it? <Link to="/login">Sign in →</Link>
+          </p>
+
         </div>
       </div>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
+  )
+}
+
+function LeftPanel({ heading, sub }) {
+  return (
+    <div className={styles.panel}>
+      <div className={styles.panelContent}>
+        <h1>{heading}</h1>
+        <p>{sub}</p>
+        <div className={styles.dots}><span /><span /><span /></div>
+      </div>
+    </div>
+  )
+}
+
+function Spinner() {
+  return (
+    <span style={{
+      width: 15, height: 15, borderRadius: '50%',
+      border: '2px solid rgba(17,27,51,0.3)', borderTopColor: '#111b33',
+      display: 'inline-block', animation: 'fp2-spin 0.7s linear infinite', marginRight: 6,
+    }}>
+      <style>{`@keyframes fp2-spin { to { transform: rotate(360deg); } }`}</style>
+    </span>
   )
 }

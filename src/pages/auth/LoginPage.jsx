@@ -5,83 +5,146 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { extractErrors } from '../../utils/helpers'
-import toast from 'react-hot-toast'
-import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import styles from './Auth.module.css'
 
 export default function LoginPage() {
   const { login }  = useAuth()
   const navigate   = useNavigate()
-  const [form, setForm]         = useState({ email:'', password:'' })
+
+  const [form, setForm]         = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState('')      // ← inline error, not toast
 
-  const onChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
+  const handleChange = (e) => {
+    setError('')   // clear error when user types
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
     try {
       await login(form.email, form.password)
-      toast.success('Welcome!')
       navigate('/')
     } catch (err) {
-      extractErrors(err).forEach(m => toast.error(m))
-    } finally { setLoading(false) } 
+      // Show error inline — toast disappears and doesn't prevent navigation
+      const status = err?.response?.status
+      if (status === 401 || status === 400) {
+        setError('Invalid email or password. Please try again.')
+      } else if (!err?.response) {
+        setError('Cannot reach the server. Check your connection.')
+      } else {
+        setError(err.response?.data?.detail || 'Sign in failed. Please try again.')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className={styles.authPage}>
+      {/* Left decorative panel */}
       <div className={styles.panel}>
         <div className={styles.panelContent}>
-          <h1>Student Sponsor<br/>Platform</h1>
+          <h1>Student Sponsor<br />Platform</h1>
           <p>Connect students with industry sponsors and faculty. Build your future, one project at a time.</p>
-          <div className={styles.dots}><span/><span/><span/></div>
+          <div className={styles.dots}><span /><span /><span /></div>
         </div>
       </div>
+
+      {/* Right form */}
       <div className={styles.formSide}>
         <div className={styles.formBox}>
           <div className={styles.formHeader}>
-            <div className={styles.iconWrap}><LogIn size={24}/></div>
+            <div className={styles.iconWrap}><LogIn size={24} /></div>
             <h2>Sign In</h2>
             <p>Enter your credentials to continue</p>
           </div>
-          <form onSubmit={onSubmit} className={styles.form}>
+
+          {/* Inline error banner — persistent, visible immediately */}
+          {error && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '12px 16px',
+              background: 'rgba(239,68,68,0.10)',
+              border: '1px solid rgba(239,68,68,0.35)',
+              borderRadius: 8,
+              color: '#fca5a5',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              marginBottom: 16,
+            }}>
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className={styles.form}>
             <div className="form-group">
               <label className="form-label">Email Address</label>
               <div className={styles.inputWrap}>
-                <Mail size={16} className={styles.inputIcon}/>
-                <input type="email" name="email" value={form.email} onChange={onChange}
-                  placeholder="you@university.edu" required
-                  className={`form-input ${styles.paddedInput}`}/>
+                <Mail size={16} className={styles.inputIcon} />
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="you@university.edu"
+                  required
+                  className={`form-input ${styles.paddedInput} ${error ? 'error' : ''}`}
+                  disabled={loading}
+                />
               </div>
             </div>
+
             <div className="form-group">
               <label className="form-label">Password</label>
               <div className={styles.inputWrap}>
-                <Lock size={16} className={styles.inputIcon}/>
-                <input type={showPass?'text':'password'} name="password" value={form.password} onChange={onChange}
-                  placeholder="••••••••" required
-                  className={`form-input ${styles.paddedInput} ${styles.paddedRight}`}/>
-                <button type="button" className={styles.eyeBtn} onClick={() => setShowPass(p=>!p)} tabIndex={-1}>
-                  {showPass ? <EyeOff size={16}/> : <Eye size={16}/>}
+                <Lock size={16} className={styles.inputIcon} />
+                <input
+                  type={showPass ? 'text' : 'password'}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                  className={`form-input ${styles.paddedInput} ${styles.paddedRight} ${error ? 'error' : ''}`}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  className={styles.eyeBtn}
+                  onClick={() => setShowPass((p) => !p)}
+                  tabIndex={-1}
+                >
+                  {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
-            
-            {/* NOTE: Forgot password link - This will be uncommented once feature is implemented at the backend*/}
-            {/* <Link to="/forgot-password" className={styles.forgotLink}>
-              Forgot your password?
-            </Link> */}
 
-            <div style={{ height: 20 }} />
+            {/* Forgot password link */}
+            <div style={{ textAlign: 'right', marginTop: -8, marginBottom: 16 }}>
+              <Link to="/forgot-password" style={{ fontSize: '0.90rem', color: 'var(--text-muted)' }}>
+                Forgot password?
+              </Link>
+            </div>
 
-            <button type="submit" className={`btn btn-primary ${styles.submitBtn}`} disabled={loading}>
+            <button
+              type="submit"
+              className={`btn btn-primary ${styles.submitBtn}`}
+              disabled={loading}
+            >
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
-          <p className={styles.switchLink}>Don't have an account? <Link to="/register">Create one →</Link></p>
+
+          <p className={styles.switchLink}>
+            Don't have an account?{' '}
+            <Link to="/register">Create one →</Link>
+          </p>
         </div>
       </div>
     </div>
