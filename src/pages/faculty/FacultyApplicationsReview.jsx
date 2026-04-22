@@ -65,7 +65,7 @@ export default function FacultyApplicationsReview() {
     try {
       const { data } = await messagingAPI.startConversation(
         studentId,
-        `Hi, I reviewed your application for "${project?.title}".`
+        ''      // ← empty string: opens conversation without sending any message
       )
       navigate(`/messages/${data.id}`)
     } catch {

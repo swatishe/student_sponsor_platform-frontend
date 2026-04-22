@@ -34,7 +34,7 @@ export default function ApplicationsReview() {
 
   const handleMessage = async (recipientId) => {
     try {
-      const { data } = await messagingAPI.startConversation(recipientId, `Hi, I reviewed your application for "${project?.title}".`)
+      const { data } = await messagingAPI.startConversation(recipientId, "")
       navigate(`/messages/${data.id}`)
     } catch { toast.error('Could not open conversation.') }
   }
