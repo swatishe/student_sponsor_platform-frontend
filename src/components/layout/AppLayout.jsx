@@ -23,7 +23,6 @@ const NAV = {
     { to: '/student/applications', icon: FileText,        label: 'Applications' },
     { to: '/messages',             icon: MessageSquare,   label: 'Messages' },
     { to: '/forum',                icon: MessagesSquare,  label: 'Forum' },
-    { to: '/student/saved', icon: Bookmark, label: 'Saved' }
 
   ],
   sponsor: [
@@ -67,6 +66,10 @@ export default function AppLayout() {
   const navItems    = NAV[user?.role] || []
   const rColor      = roleColor(user?.role)
   const profilePath = PROFILE_ROUTE[user?.role]
+  const handleSavedNav = () => {
+  setMeOpen(false)
+  navigate('/student/saved')
+  }
 
   // Close Me dropdown on outside click
   useEffect(() => {
@@ -164,6 +167,15 @@ export default function AppLayout() {
                   <button className={styles.meDropdownItem} onClick={handleProfileNav}>
                     <User size={15} />
                     View Profile
+                  </button>
+                )}
+                {user?.role === 'student' && (
+                  <button
+                    className={styles.meDropdownItem}
+                    onClick={handleSavedNav}
+                  >
+                    <Bookmark size={15} />
+                    Saved Projects
                   </button>
                 )}
 

@@ -6,14 +6,16 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { projectAPI, applicationAPI, messagingAPI, savedAPI } from '../../api/services'
 import { useAuth } from '../../context/AuthContext'
-import SaveButton from '../../components/common/SaveButton'
 import toast from 'react-hot-toast'
-import { Calendar, Briefcase, DollarSign, Users, ArrowLeft, Send, MessageSquare, CheckCircle, Clock } from 'lucide-react'
+import {
+  Calendar, Briefcase, DollarSign, Users, ArrowLeft,
+  Send, MessageSquare, CheckCircle, Clock, Bookmark, BookmarkCheck,
+} from 'lucide-react'
 
 export default function ProjectDetailPage() {
-  const { id }       = useParams()
-  const { user }     = useAuth()
-  const navigate     = useNavigate()
+  const { id }   = useParams()
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   const [project,     setProject]     = useState(null)
   const [loading,     setLoading]     = useState(true)
@@ -22,13 +24,12 @@ export default function ProjectDetailPage() {
   const [coverLetter, setCoverLetter] = useState('')
   const [showForm,    setShowForm]    = useState(false)
   const [isSaved,     setIsSaved]     = useState(false)
+  const [savingState, setSavingState] = useState(false)
+  const [messaging,   setMessaging]   = useState(false)
 
   useEffect(() => {
     const fetches = [projectAPI.getProject(id)]
-    // Only check saved state for students
-    if (user?.role === 'student') {
-      fetches.push(savedAPI.isSaved(id))
-    }
+    if (user?.role === 'student') fetches.push(savedAPI.isSaved(id))
 
     Promise.all(fetches)
       .then(([projRes, savedRes]) => {
@@ -53,187 +54,234 @@ export default function ProjectDetailPage() {
     }
   }
 
+  // Fix 1: just open the conversation — no pre-filled auto-message sent
   const handleMessage = async () => {
     if (!project?.created_by?.id) return
+    setMessaging(true)
     try {
       const { data } = await messagingAPI.startConversation(
         project.created_by.id,
-        `Hi, I'm interested in your project: "${project.title}"`
+        ''      // ← empty string: opens conversation without sending any message
       )
       navigate(`/messages/${data.id}`)
     } catch {
       toast.error('Could not start conversation.')
+    } finally {
+      setMessaging(false)
+    }
+  }
+
+  const handleSave = async () => {
+    if (savingState) return
+    setSavingState(true)
+    try {
+      if (isSaved) {
+        await savedAPI.unsave(id)
+        setIsSaved(false)
+        toast.success('Removed from saved projects.')
+      } else {
+        await savedAPI.save(id)
+        setIsSaved(true)
+        toast.success('Project saved!')
+      }
+    } catch {
+      toast.error('Could not update saved projects.')
+    } finally {
+      setSavingState(false)
     }
   }
 
   if (loading) return (
-    <div style={{ display:'flex', alignItems:'center', gap:8, color:'var(--text-muted)', padding:40 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', padding: 40 }}>
       <Clock size={20} /> Loading project…
     </div>
   )
   if (!project) return (
-    <div style={{ textAlign:'center', padding:60 }}>
-      <h3 style={{ color:'var(--text-muted)' }}>Project not found.</h3>
+    <div style={{ textAlign: 'center', padding: 60 }}>
+      <h3 style={{ color: 'var(--text-muted)' }}>Project not found.</h3>
     </div>
   )
 
   const isStudent = user?.role === 'student'
+  const isOpen    = project.status === 'open'
 
   return (
-    <div style={{ maxWidth:760, margin:'0 auto' }}>
-
-      {/* Back */}
+    <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <button
         onClick={() => navigate(-1)}
-        className="btn btn-ghost"
-        style={{ display:'flex', alignItems:'center', gap:6, marginBottom:20, fontSize:'0.875rem' }}
+        className="btn btn-secondary"
+        style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 6 }}
       >
-        <ArrowLeft size={15} /> Back
+        <ArrowLeft size={16} /> Back
       </button>
 
-      {/* Main card */}
-      <div className="card" style={{ marginBottom:20 }}>
+      {/* ── Main project card ── */}
+      <div className="card" style={{ marginBottom: 20 }}>
 
-        {/* Title row */}
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:14, marginBottom:16 }}>
-          <div style={{ flex:1 }}>
-            <h1 style={{ fontSize:'1.5rem', fontWeight:800, marginBottom:8 }}>{project.title}</h1>
-            <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
-              <span className={`badge badge-${project.status}`}>{project.status}</span>
-              <span style={{ fontSize:'0.82rem', color:'var(--text-secondary)', textTransform:'capitalize' }}>
-                <Briefcase size={13} style={{ verticalAlign:'middle', marginRight:4 }} />
-                {project.project_type?.replace('_', ' ')}
-              </span>
-              {project.is_paid && (
-                <span style={{ fontSize:'0.82rem', color:'var(--accent-success)' }}>
-                  <DollarSign size={13} style={{ verticalAlign:'middle' }} />
-                  {project.stipend || 'Paid'}
-                </span>
-              )}
-              {project.deadline && (
-                <span style={{ fontSize:'0.82rem', color:'var(--text-muted)' }}>
-                  <Calendar size={13} style={{ verticalAlign:'middle', marginRight:3 }} />
-                  Deadline: {new Date(project.deadline).toLocaleDateString()}
-                </span>
-              )}
-              {project.max_applicants > 0 && (
-                <span style={{ fontSize:'0.82rem', color:'var(--text-muted)' }}>
-                  <Users size={13} style={{ verticalAlign:'middle', marginRight:3 }} />
-                  Up to {project.max_applicants} applicants
-                </span>
-              )}
-            </div>
+        {/* Title + status + save */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, gap: 12 }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, flex: 1, lineHeight: 1.25 }}>
+            {project.title}
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <span className={`badge badge-${project.status}`}>{project.status}</span>
+            {/* Fix 3: Save button inline in card header */}
+            {isStudent && (
+              <button
+                onClick={handleSave}
+                disabled={savingState}
+                title={isSaved ? 'Remove from saved' : 'Save project'}
+                className={isSaved ? 'btn btn-secondary' : 'btn btn-ghost'}
+                style={{
+                  padding: '6px 14px',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  fontSize: '0.875rem',
+                  color: isSaved ? 'var(--accent-primary)' : 'var(--text-muted)',
+                  borderColor: isSaved ? 'var(--accent-primary)' : undefined,
+                  opacity: savingState ? 0.6 : 1,
+                }}
+              >
+                {isSaved ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
+                {isSaved ? 'Saved' : 'Save'}
+              </button>
+            )}
           </div>
+        </div>
 
-          {/* Save button — students only */}
-          {isStudent && (
-            <SaveButton
-              projectId={project.id}
-              isSaved={isSaved}
-              onChange={setIsSaved}
-            />
+        {/* Meta row */}
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 20, color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5, textTransform: 'capitalize' }}>
+            <Briefcase size={14} /> {project.project_type?.replace('_', ' ')}
+          </span>
+          {project.is_paid && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'var(--accent-success)' }}>
+              <DollarSign size={14} /> {project.stipend || 'Paid'}
+            </span>
+          )}
+          <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Users size={14} /> {project.application_count} applicant{project.application_count !== 1 ? 's' : ''}
+          </span>
+          {project.deadline && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <Calendar size={14} /> Deadline: {new Date(project.deadline).toLocaleDateString()}
+            </span>
           )}
         </div>
 
-        {/* Description */}
-        <h3 style={{ fontSize:'0.9rem', color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:8 }}>
-          About this project
-        </h3>
-        <p style={{ lineHeight:1.75, color:'var(--text-primary)', marginBottom:20, whiteSpace:'pre-wrap' }}>
-          {project.description}
-        </p>
+        <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', marginBottom: 20 }} />
 
-        {/* Requirements */}
+        {/* Description */}
+        <section style={{ marginBottom: 20 }}>
+          <h3 style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 10, fontWeight: 700 }}>
+            About this project
+          </h3>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.75, whiteSpace: 'pre-wrap' }}>
+            {project.description}
+          </p>
+        </section>
+
         {project.requirements && (
-          <>
-            <h3 style={{ fontSize:'0.9rem', color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:8 }}>
+          <section style={{ marginBottom: 20 }}>
+            <h3 style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 10, fontWeight: 700 }}>
               Requirements
             </h3>
-            <p style={{ lineHeight:1.75, color:'var(--text-primary)', marginBottom:20, whiteSpace:'pre-wrap' }}>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.75, whiteSpace: 'pre-wrap' }}>
               {project.requirements}
             </p>
-          </>
+          </section>
         )}
 
-        {/* Tags */}
         {project.tags_list?.length > 0 && (
-          <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:20 }}>
-            {project.tags_list.map((tag) => (
-              <span key={tag} style={{ padding:'3px 10px', background:'rgba(108,99,255,0.1)', color:'var(--accent-primary)', borderRadius:'var(--radius-full)', fontSize:'0.78rem', border:'1px solid rgba(108,99,255,0.2)' }}>
-                {tag}
-              </span>
-            ))}
-          </div>
+          <section style={{ marginBottom: 20 }}>
+            <h3 style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 10, fontWeight: 700 }}>
+              Skills & Tags
+            </h3>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {project.tags_list.map((tag) => (
+                <span key={tag} style={{
+                  padding: '3px 12px', borderRadius: 100,
+                  background: 'rgba(108,99,255,0.10)', color: 'var(--accent-primary)',
+                  fontSize: '0.8rem', border: '1px solid rgba(108,99,255,0.2)',
+                }}>{tag}</span>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Posted by */}
-        <div style={{ fontSize:'0.82rem', color:'var(--text-muted)', borderTop:'1px solid var(--border-color)', paddingTop:14 }}>
-          Posted by <strong style={{ color:'var(--text-primary)' }}>{project.created_by?.first_name} {project.created_by?.last_name}</strong>
-          {project.created_by?.role && (
-            <span style={{ marginLeft:6 }}>· {project.created_by.role}</span>
-          )}
-        </div>
-      </div>
-
-      {/* ── Action area — students only ── */}
-      {isStudent && project.status === 'open' && (
-        <div className="card">
-          {applied ? (
-            <div style={{ display:'flex', alignItems:'center', gap:10, color:'var(--accent-success)' }}>
-              <CheckCircle size={20} />
-              <span style={{ fontWeight:600 }}>Application submitted! We'll notify you of any updates.</span>
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+            background: 'var(--accent-warning)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 700, color: 'white', fontSize: '0.9rem',
+          }}>
+            {project.created_by?.first_name?.[0]}{project.created_by?.last_name?.[0]}
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 2 }}>POSTED BY</div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+              {project.created_by?.first_name} {project.created_by?.last_name}
             </div>
-          ) : showForm ? (
-            <>
-              <h3 style={{ marginBottom:14, fontSize:'1rem' }}>Cover Letter <span style={{ color:'var(--text-muted)', fontWeight:400 }}>(optional)</span></h3>
-              <textarea
-                value={coverLetter}
-                onChange={(e) => setCoverLetter(e.target.value)}
-                placeholder="Briefly explain why you're a great fit for this project…"
-                className="form-input"
-                rows={5}
-                style={{ marginBottom:14 }}
-              />
-              <div style={{ display:'flex', gap:10 }}>
+          </div>
+          <span className={`badge badge-${project.created_by?.role}`} style={{ marginLeft: 4 }}>
+            {project.created_by?.role}
+          </span>
+        </div>
+
+        {/* Fix 3: Action buttons at bottom of card, not a separate floating section */}
+        {isStudent && (
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, marginTop: 20 }}>
+            {applied ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--accent-success)', fontWeight: 600 }}>
+                <CheckCircle size={20} />
+                Application submitted! We'll notify you of any updates.
+              </div>
+            ) : showForm ? (
+              <div>
+                <h3 style={{ fontSize: '0.95rem', marginBottom: 12 }}>
+                  Cover Letter <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(optional)</span>
+                </h3>
+                <textarea
+                  className="form-input"
+                  rows={4}
+                  placeholder="Briefly explain why you're a great fit for this project…"
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  style={{ marginBottom: 12 }}
+                />
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button className="btn btn-primary" onClick={handleApply} disabled={applying}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Send size={14} /> {applying ? 'Submitting…' : 'Submit Application'}
+                  </button>
+                  <button className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                {isOpen && (
+                  <button
+                    className="btn btn-primary"
+                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                    onClick={() => setShowForm(true)}
+                  >
+                    <Send size={15} /> Apply Now
+                  </button>
+                )}
                 <button
-                  className="btn btn-primary"
-                  onClick={handleApply}
-                  disabled={applying}
-                  style={{ display:'flex', alignItems:'center', gap:6 }}
+                  className="btn btn-secondary"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                  onClick={handleMessage}
+                  disabled={messaging}
                 >
-                  <Send size={14} />
-                  {applying ? 'Submitting…' : 'Submit Application'}
-                </button>
-                <button className="btn btn-secondary" onClick={() => setShowForm(false)}>
-                  Cancel
+                  <MessageSquare size={15} /> {messaging ? 'Opening…' : 'Message Sponsor'}
                 </button>
               </div>
-            </>
-          ) : (
-            <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-              <button
-                className="btn btn-primary"
-                style={{ display:'flex', alignItems:'center', gap:6 }}
-                onClick={() => setShowForm(true)}
-              >
-                <Send size={14} /> Apply Now
-              </button>
-              <button
-                className="btn btn-secondary"
-                style={{ display:'flex', alignItems:'center', gap:6 }}
-                onClick={handleMessage}
-              >
-                <MessageSquare size={14} /> Message Sponsor
-              </button>
-              <SaveButton
-                projectId={project.id}
-                isSaved={isSaved}
-                onChange={setIsSaved}
-              />
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
