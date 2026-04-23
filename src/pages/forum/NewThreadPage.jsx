@@ -7,12 +7,14 @@ import { useNavigate, Link } from 'react-router-dom'
 import { forumAPI } from '../../api/services'
 import toast from 'react-hot-toast'
 
+// Visibility options for discussion threads, allowing the creator to specify who can see and participate in the thread. Options include all users, students only, or department only.
 const VISIBILITY_OPTIONS = [
   { value: 'all',        label: 'All Users' },
   { value: 'students',   label: 'Students Only' },
   { value: 'department', label: 'Department Only' },
 ]
 
+// New thread creation page component. Contains a form for entering thread details such as title, description, department, tags, and visibility. On submission, it calls the API to create the thread and navigates to the thread detail page on success.
 export default function NewThreadPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({
@@ -26,6 +28,7 @@ export default function NewThreadPage() {
 
   const onChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }))
 
+  // Handle form submission: validate input, call API to create thread, and show success or error messages. On success, navigates to the newly created thread's detail page.
   const onSubmit = async (e) => {
     e.preventDefault()
     if (!form.title.trim()) { toast.error('Title is required.'); return }
@@ -42,6 +45,7 @@ export default function NewThreadPage() {
     }
   }
 
+  // Main render of the new thread creation page, including a back link to the forum, a header, and a form for entering thread details. The form includes fields for title, description, department, tags, and visibility, along with submit and cancel buttons.
   return (
     <div className="page-enter" style={{ maxWidth:680, margin:'0 auto' }}>
       <div style={{ marginBottom:24 }}>

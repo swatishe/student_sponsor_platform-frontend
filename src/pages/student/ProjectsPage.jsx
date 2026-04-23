@@ -13,6 +13,7 @@ import styles from './Projects.module.css'
 
 const TYPES = ['','internship','research','part_time','full_time','freelance','capstone']
 
+// The projects page component fetches a list of projects from the API and displays them in a searchable and filterable format. It includes a toolbar with a search input, project type filter, and paid-only toggle. The projects are displayed as cards showing key information, and the page handles loading and empty states appropriately.
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([])
   const [loading, setLoading]   = useState(true)
@@ -20,6 +21,7 @@ export default function ProjectsPage() {
   const [type, setType]         = useState('')
   const [paidOnly, setPaid]     = useState(false)
 
+  // Fetch projects from the API with optional search and filters. This function is called on component mount and whenever the search query, project type filter, or paid-only toggle changes. It constructs the API request parameters based on the current state of the search and filters, makes the API call to fetch projects, and updates the state with the response. A loading state is used to show a spinner while fetching.
   const fetchProjects = useCallback(async () => {
     setLoading(true)
     try {
@@ -32,11 +34,13 @@ export default function ProjectsPage() {
     } finally { setLoading(false) }
   }, [search, type, paidOnly])
 
+  // Debounce the fetchProjects function to avoid making API calls on every keystroke. This effect sets up a debounce timer that calls fetchProjects after a short delay whenever the search query or filters change. If the component unmounts or if the dependencies change before the timer fires, the timer is cleared to prevent unnecessary API calls.
   useEffect(() => {
     const t = setTimeout(fetchProjects, 400)
     return () => clearTimeout(t)
   }, [fetchProjects])
 
+  // Main render of the projects page, including toolbar with search and filters, and list of project cards. Shows loading state while fetching and empty state if no projects are found.
   return (
     <div className="page-enter">
       <div className="page-header">
@@ -76,6 +80,7 @@ export default function ProjectsPage() {
   )
 }
 
+// Component for rendering individual project cards in the projects listing page. Each card displays the project title, type, sponsor, application count, deadline, and tags. The card is clickable and links to the project detail page. It also shows a badge for the project status and type, and highlights if the project is paid.
 function ProjectCard({ project: p }) {
   return (
     <Link to={`/student/projects/${p.id}`} style={{ textDecoration:'none' }}>

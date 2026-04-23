@@ -12,11 +12,13 @@ import Spinner from '../../components/common/Spinner'
 import { Plus, Briefcase, Users, CheckCircle, Clock, ArrowRight } from 'lucide-react'
 import styles from './SponsorDashboard.module.css'
 
+// Sponsor dashboard page component. Fetches the sponsor's projects on mount and displays key stats and a list of recent projects with links to manage them.
 export default function SponsorDashboard() {
   const { user } = useAuth()
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Fetch the user's projects from the API. Called on component mount. The API call retrieves projects created by the logged-in user (sponsor), and the response is stored in state. A loading state is used to show a spinner while the data is being fetched.
   useEffect(() => {
     projectAPI.getMyProjects()
       .then(({ data }) => setProjects(data?.results ?? data ?? []))
@@ -29,6 +31,7 @@ export default function SponsorDashboard() {
   const closedCount = projects.filter((p) => p.status === 'closed').length
   const totalApps = projects.reduce((s, p) => s + (p.application_count || 0), 0)
 
+  // Main render of the sponsor dashboard, showing a welcome message, stats cards, and a table of recent projects with badges indicating status and links to manage applications.
   return (
     <div className="page-enter">
 
@@ -105,6 +108,8 @@ export default function SponsorDashboard() {
   )
 }
 
+
+// Reusable stat card component for displaying key metrics on the dashboard. It takes an icon, color, value, and label as props and renders a styled card with that information.
 function StatCard({ icon, color, value, label }) {
   return (
     <div className={styles.statCard}>

@@ -8,6 +8,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { authAPI } from '../../api/services'
 import styles from './Auth.module.css'
 
+// Forgot password page. User enters their email to receive a password reset link. Shows confirmation message after submission
 export default function ResetPasswordPage() {
   const [searchParams]          = useSearchParams()
   const token                   = searchParams.get('token')
@@ -22,6 +23,7 @@ export default function ResetPasswordPage() {
     if (!token) setStatus('invalid')
   }, [token])
 
+  // Validate password input before submission. Checks for presence, length, and match between password and confirmation fields. Sets error messages accordingly.
   const validate = () => {
     if (!password)              { setError('Please enter a new password.'); return false }
     if (password.length < 8)    { setError('Password must be at least 8 characters.'); return false }
@@ -29,6 +31,7 @@ export default function ResetPasswordPage() {
     return true
   }
 
+  //  Handle form submission: validate input, call API to reset password, and show success message or errors. Handles specific error cases for invalid/expired token and password validation errors from the API.
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validate()) return

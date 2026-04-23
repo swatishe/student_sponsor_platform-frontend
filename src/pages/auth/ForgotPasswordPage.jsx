@@ -7,12 +7,14 @@ import { Link } from 'react-router-dom'
 import { authAPI } from '../../api/services'
 import styles from './Auth.module.css'
 
+// Forgot password page. User enters their email to receive a password reset link. Shows confirmation message after submission
 export default function ForgotPasswordPage() {
   const [email,   setEmail]   = useState('')
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState('')
   const [sent,    setSent]    = useState(false)
 
+  // Handle form submission: validate email, call API to request password reset, and show confirmation message. Always show success message for 4xx errors to prevent email enumeration.
   const handleSubmit = async (e) => {
     e.preventDefault()
     const trimmed = email.trim()
@@ -117,6 +119,7 @@ export default function ForgotPasswordPage() {
   )
 }
 
+// Left panel component for auth pages, showing heading and subtext with decorative dots.
 function LeftPanel({ heading, sub }) {
   return (
     <div className={styles.panel}>
@@ -129,6 +132,7 @@ function LeftPanel({ heading, sub }) {
   )
 }
 
+// Simple spinner component for loading states, using CSS animation.
 function Spinner() {
   return (
     <span style={{

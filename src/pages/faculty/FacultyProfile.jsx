@@ -21,6 +21,7 @@ export default function FacultyProfile() {
   const [loading, setLoading] = useState(true)
   const [saving,  setSaving]  = useState(false)
 
+  // Fetch the faculty member's profile on mount. The API call retrieves the current profile information for the logged-in faculty user, and the response is used to pre-fill the form fields. A loading state is used to show a spinner while the data is being fetched.
   useEffect(() => {
     profileAPI.getFacultyProfile()
       .then(({ data }) => {
@@ -35,9 +36,11 @@ export default function FacultyProfile() {
       .finally(() => setLoading(false))
   }, [])
 
+  // Handle form field changes by updating the corresponding value in the form state. This function is called onChange for each input field, allowing the user to edit their profile information.
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
 
+  // Handle form submission: call API to update profile with the current form state, show success or error messages, and manage saving state to disable inputs while the request is in progress.
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
@@ -51,6 +54,7 @@ export default function FacultyProfile() {
     }
   }
 
+  // Show loading state while fetching profile data on mount. Displays a spinner and message to indicate that the profile is being loaded.
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', gap:8, color:'var(--text-muted)', padding:40 }}>
       <User size={18} /> Loading profile…
@@ -59,6 +63,7 @@ export default function FacultyProfile() {
 
   const initials = `${user?.first_name?.[0] ?? ''}${user?.last_name?.[0] ?? ''}`.toUpperCase()
 
+  // Main render of the faculty profile page, showing an identity card with the faculty member's name, email, and role, followed by a form to edit their department, university, bio, and research interests. The form is pre-filled with existing data and allows saving updates to the profile.
   return (
     <div className="page-enter" style={{ maxWidth:720 }}>
       <div className="page-header">

@@ -16,6 +16,7 @@ import { formatDistanceToNow } from 'date-fns'
 
 const STATUS_OPTIONS = ['pending', 'reviewing', 'accepted', 'rejected']
 
+// Status badge colors for different application statuses. Used to style the status label in the applicant cards.
 const STATUS_COLORS = {
   pending:   { bg: 'rgba(245,158,11,0.12)',  color: '#fbbf24' },
   reviewing: { bg: 'rgba(56,189,248,0.12)',  color: '#38bdf8' },
@@ -24,6 +25,7 @@ const STATUS_COLORS = {
   withdrawn: { bg: 'rgba(107,114,128,0.12)', color: '#9ca3af' },
 }
 
+// Main component for faculty to review applications for a specific project. Fetches project and application data on mount, allows filtering by status, and provides actions to update application status, message students, and view student profiles.
 export default function FacultyApplicationsReview() {
   const { id }    = useParams()   // project ID
   const navigate  = useNavigate()
@@ -36,6 +38,7 @@ export default function FacultyApplicationsReview() {
   const [profiles, setProfiles] = useState({})     // { studentId: profileData }
   const [loadingProfile, setLoadingProfile] = useState(null)
 
+  // ── Fetch project and applications on mount ─────────────────────────────────
   useEffect(() => {
     Promise.all([
       projectAPI.getProject(id),
@@ -101,12 +104,14 @@ export default function FacultyApplicationsReview() {
 
   const filtered = filter ? apps.filter((a) => a.status === filter) : apps
 
+  // Show loading state while fetching data on mount. Displays a spinner and message to indicate that applicants are being loaded.
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', gap:8, color:'var(--text-muted)', padding:40 }}>
       <Clock size={18} /> Loading applicants…
     </div>
   )
 
+  //  Main render of the applications review page, including back button, header with project title and applicant count, status filter buttons, and list of applicant cards. Each card shows student info, application status, cover letter, and action buttons to view profile, message, and update status.
   return (
     <div className="page-enter">
 

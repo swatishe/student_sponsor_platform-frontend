@@ -12,6 +12,7 @@ import Badge from '../../components/common/Badge'
 import toast from 'react-hot-toast'
 import { Plus, MessageSquare, Pin, Lock, Search } from 'lucide-react'
 
+// Forum page component. Fetches discussion threads on mount and displays them in a list with search and department filter. Faculty and admins can create new threads. Each thread shows title, creator, department, tags, post count, and latest post info. Clicking a thread navigates to its detail page.
 export default function ForumPage() {
   const { user }                  = useAuth()
   const navigate                  = useNavigate()
@@ -20,6 +21,7 @@ export default function ForumPage() {
   const [dept,     setDept]       = useState('')
   const [search,   setSearch]     = useState('')
 
+  //  Fetch threads from the API with optional department filter. Called on mount and when the department filter is applied. The response is stored in state, and a loading state is used to show a spinner while fetching.
   const load = (department = '') => {
     setLoading(true)
     const params = {}
@@ -30,15 +32,19 @@ export default function ForumPage() {
       .finally(() => setLoading(false))
   }
 
+  // Load threads on component mount.
   useEffect(() => { load() }, [])
 
+  // Determine if the current user can create new threads (faculty or admin).
   const canCreate = user?.role === 'faculty' || user?.role === 'admin'
 
+  // Filter threads based on search query matching title or department. If the search query is empty, all threads are shown.
   const filtered = threads.filter((t) => {
     if (!search.trim()) return true
     return t.title.toLowerCase().includes(search.toLowerCase())
   })
 
+  // Show loading state while fetching threads. Displays a spinner and message to indicate that the threads are being loaded.
   return (
     <div className="page-enter">
       <div className="page-header" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:12 }}>

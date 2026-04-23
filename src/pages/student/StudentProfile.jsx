@@ -9,12 +9,14 @@ import Avatar from '../../components/common/Avatar'
 import toast from 'react-hot-toast'
 import { Save } from 'lucide-react'
 
+// Student profile page component. Fetches the student's profile on mount and allows editing company details such as name, industry, website, and description.
 export default function StudentProfile() {
   const { user }  = useAuth()
   const [form, setForm]     = useState({ bio:'', university:'', major:'', gpa:'', skills:'', portfolio_url:'', linkedin_url:'', github_url:'' })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving]   = useState(false)
 
+  // Fetch the student's profile data from the API. Called on component mount. The API call retrieves the student's profile information, which is then used to populate the form state for editing. A loading state is used to show a spinner while the data is being fetched.
   useEffect(() => {
     profileAPI.getStudentProfile().then(({ data }) => {
       setForm({ bio:data.bio||'', university:data.university||'', major:data.major||'', gpa:data.gpa||'', skills:data.skills||'', portfolio_url:data.portfolio_url||'', linkedin_url:data.linkedin_url||'', github_url:data.github_url||'' })
@@ -23,6 +25,7 @@ export default function StudentProfile() {
 
   const onChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
 
+  // Handle form submission to update the student profile. When the form is submitted, this function sends the updated profile data to the API. It shows a success toast if the update is successful or an error toast if it fails. A saving state is used to disable the submit button while the request is in progress.
   const onSubmit = async (e) => {
     e.preventDefault(); setSaving(true)
     try { await profileAPI.updateStudentProfile(form); toast.success('Profile updated!') }
@@ -32,6 +35,7 @@ export default function StudentProfile() {
 
   if (loading) return <Spinner text="Loading profile…"/>
 
+  // Main render of the student profile page, showing a header with company info and a form for editing the profile details.
   return (
     <div className="page-enter" style={{ maxWidth:720 }}>
       <div className="page-header"><h1>My Profile</h1><p>Keep your profile up to date to attract the best opportunities.</p></div>

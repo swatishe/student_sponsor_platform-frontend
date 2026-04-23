@@ -11,6 +11,7 @@ import Badge from '../../components/common/Badge'
 import Avatar from '../../components/common/Avatar'
 import { Users, Briefcase, GraduationCap, Building2, BookOpen, ShieldCheck } from 'lucide-react'
 
+// Admin dashboard page component. Fetches user and project data on mount and displays stats and recent activity.
 export default function AdminDashboard() {
   const [users, setUsers]       = useState([])
   const [projects, setProjects] = useState([])
@@ -29,6 +30,7 @@ export default function AdminDashboard() {
 
   const byRole = (r) => users.filter((u) => u.role === r).length
 
+  // Main render of the admin dashboard, showing stats cards and lists of recent users and projects with badges indicating roles and statuses.
   return (
     <div className="page-enter">
       <div className="page-header">

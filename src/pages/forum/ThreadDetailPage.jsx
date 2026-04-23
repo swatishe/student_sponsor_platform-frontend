@@ -14,6 +14,7 @@ import {
   Flag, Trash2, MessageSquare, Lock, ChevronDown, ChevronUp, Send,
 } from 'lucide-react'
 
+// Thread detail page component. Fetches thread details and posts on mount. Displays thread info, list of posts with replies, and a form to add new posts. Allows post deletion and flagging for admins, and thread management for owners/admins.
 export default function ThreadDetailPage() {
   const { id }          = useParams()
   const { user }        = useAuth()
@@ -26,6 +27,7 @@ export default function ThreadDetailPage() {
   const [content, setContent] = useState('')
   const [posting, setPosting] = useState(false)
 
+  // Fetch thread details and posts from the API. Called on component mount and whenever the thread ID changes. The thread details and posts are stored in state, and a loading state is used to show a spinner while fetching.
   const load = () => {
     Promise.all([
       forumAPI.getThread(id),
@@ -41,6 +43,7 @@ export default function ThreadDetailPage() {
 
   useEffect(() => { load() }, [id])
 
+  // Handle adding a new post to the thread. Validates input, calls API to create the post, and refreshes the post list on success. Also scrolls to the bottom of the thread to show the new post.
   const handlePost = async (e) => {
     e.preventDefault()
     if (!content.trim()) return
@@ -57,6 +60,7 @@ export default function ThreadDetailPage() {
     }
   }
 
+  // Handle deleting a post with confirmation. Calls API to delete the post and refreshes the post list on success.
   const handleDeletePost = async (postId) => {
     if (!window.confirm('Delete this post?')) return
     try {
@@ -66,6 +70,7 @@ export default function ThreadDetailPage() {
     } catch { toast.error('Failed to delete post.') }
   }
 
+  // Handle flagging or unflagging a post for admin review. Calls API to toggle the flagged status and refreshes the post list on success.
   const handleFlagPost = async (postId) => {
     try {
       const { data } = await forumAPI.flagPost(postId)
@@ -74,6 +79,7 @@ export default function ThreadDetailPage() {
     } catch { toast.error('Failed to flag post.') }
   }
 
+  // Handle deleting the thread with confirmation. Calls API to delete the thread and navigates back to the forum page on success.
   const handleDeleteThread = async () => {
     if (!window.confirm(`Delete thread "${thread.title}"?`)) return
     try {
@@ -83,6 +89,7 @@ export default function ThreadDetailPage() {
     } catch { toast.error('Failed to delete thread.') }
   }
 
+  // Handle closing or reopening the thread. Calls API to toggle the closed status and refreshes the thread details on success.
   const handleToggleClose = async () => {
     try {
       await forumAPI.updateThread(id, { is_closed: !thread.is_closed })
@@ -99,6 +106,7 @@ export default function ThreadDetailPage() {
   if (loading) return <Spinner text="Loading thread…" />
   if (!thread)  return <p style={{ color:'var(--text-muted)', padding:40 }}>Thread not found.</p>
 
+  // Main render of the thread detail page, including thread header with title, description, and metadata, list of posts with replies, and a form to add new posts if the thread is not closed. Admins have options to manage the thread and posts.
   return (
     <div className="page-enter" style={{ maxWidth:780, margin:'0 auto' }}>
 

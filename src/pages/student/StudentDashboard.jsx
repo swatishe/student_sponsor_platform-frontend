@@ -11,12 +11,14 @@ import Badge from '../../components/common/Badge'
 import { Briefcase, FileText, CheckCircle, TrendingUp, ArrowRight } from 'lucide-react'
 import { timeAgo } from '../../utils/helpers'
 
+// Note: The dashboard provides a snapshot of the student's activity on the platform, including the number of open projects, total applications, accepted offers, and applications under review. It also lists recent applications with their status and the latest open projects for quick access. The data is fetched from the API when the component mounts, and loading states are handled gracefully to enhance user experience.
 export default function StudentDashboard() {
   const { user } = useAuth()
   const [projects, setProjects]         = useState([])
   const [applications, setApplications] = useState([])
   const [loading, setLoading]           = useState(true)
 
+  // Fetch the student's open projects and applications from the API. Called on component mount. The API calls retrieve all open projects and all applications submitted by the logged-in student, and the responses are stored in state. A loading state is used to show a spinner while the data is being fetched.
   useEffect(() => {
     Promise.all([
       projectAPI.getProjects({ status: 'open' }),
@@ -31,6 +33,7 @@ export default function StudentDashboard() {
 
   const counts = applications.reduce((acc, a) => { acc[a.status] = (acc[a.status]||0)+1; return acc }, {})
 
+  // Main render of the student dashboard, showing a welcome message, stats cards, and lists of recent applications and latest open projects with links to view more.
   return (
     <div className="page-enter">
       <div className="page-header">

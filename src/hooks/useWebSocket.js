@@ -18,6 +18,7 @@ export default function useWebSocket(url, onMessage) {
   // Keep callback ref up-to-date without re-triggering the effect
   useEffect(() => { onMsgRef.current = onMessage }, [onMessage])
 
+  // Connect to WebSocket with auth token. Handles incoming messages and reconnection logic.
   const connect = useCallback(() => {
     if (!url) return
 

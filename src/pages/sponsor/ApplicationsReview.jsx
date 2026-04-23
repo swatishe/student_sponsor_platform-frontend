@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import { ArrowLeft, MessageSquare, CheckCircle, XCircle, Eye } from 'lucide-react'
 import { timeAgo } from '../../utils/helpers'
 
+// Status options for filtering applications. These correspond to the possible statuses an application can have, such as pending, reviewing, accepted, or rejected. The empty string represents the option to show all applications regardless of status.
 const STATUS_OPTIONS = ['','pending','reviewing','accepted','rejected']
 // Note: This page is accessed by sponsors from the project details page when they click on the "View Applications" button. The URL includes the project ID, which is used to fetch the relevant applications for that project. Sponsors can then review each application, see the applicant's information and cover letter, and update the application status or message the applicant directly from this interface.
 export default function ApplicationsReview() {
@@ -21,17 +22,20 @@ export default function ApplicationsReview() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter]   = useState('')
 
+  // Fetch project details and applications for the project from the API. Called on component mount and whenever the project ID changes. The project details and applications are stored in state, and a loading state is used to show a spinner while fetching.
   useEffect(() => {
     Promise.all([projectAPI.getProject(id), applicationAPI.getProjectApplications(id)])
       .then(([pRes, aRes]) => { setProject(pRes.data); setApps(aRes.data?.results ?? aRes.data ?? []) })
       .finally(() => setLoading(false))
   }, [id])
 
+  // Handle updating the status of an application. Calls API to update the application status and updates the local state to reflect the change. Shows a toast notification on success or failure.
   const handleStatus = async (appId, status) => {
     try { await applicationAPI.updateStatus(appId, { status }); setApps(prev => prev.map(a => a.id===appId ? {...a,status} : a)); toast.success(`Marked as ${status}.`) }
     catch { toast.error('Failed to update.') }
   }
 
+  // Handle messaging an applicant by starting a conversation through the messaging API and navigating to the conversation page. Shows a toast notification if the conversation cannot be opened.
   const handleMessage = async (recipientId) => {
     try {
       const { data } = await messagingAPI.startConversation(recipientId, "")
@@ -41,8 +45,10 @@ export default function ApplicationsReview() {
 
   const filtered = filter ? apps.filter(a => a.status===filter) : apps
 
+  // Show loading state while fetching project and applications data. Displays a spinner and message to indicate that the applications are being loaded.
   if (loading) return <Spinner text="Loading applicants…"/>
 
+  // Show empty state if no applications are found for the project. Displays a message indicating that there are no applicants yet.
   return (
     <div className="page-enter">
       <button onClick={() => navigate(-1)} className="btn btn-secondary" style={{ marginBottom:20 }}><ArrowLeft size={16}/>Back</button>

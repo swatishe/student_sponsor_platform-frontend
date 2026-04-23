@@ -56,6 +56,7 @@ const PROFILE_ROUTE = {
   admin:   null,
 }
 
+// AppLayout is the main layout component that wraps around all pages after login. It includes the top navigation bar with role-based links, a Me dropdown for profile and logout, and a mobile hamburger menu. The page content is rendered via <Outlet /> from React Router. The layout also handles responsive design for mobile screens and manages the state for the dropdowns and mobile menu. It uses the AuthContext to access user information and logout functionality, and it applies role-specific colors to the avatar in the Me dropdown.
 export default function AppLayout() {
   const { user, logout }            = useAuth()
   const navigate                    = useNavigate()
@@ -93,6 +94,7 @@ export default function AppLayout() {
     if (profilePath) navigate(profilePath)
   }
 
+  // Render the layout with navbar and page content
   return (
     <div className={styles.layout}>
 

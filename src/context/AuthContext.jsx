@@ -7,8 +7,9 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { authAPI } from '../api/services'
 import toast from 'react-hot-toast'
 
+// Create a React Context for authentication state and functions.
 const AuthContext = createContext(null)
-
+//  AuthProvider component to wrap the app and provide auth state/functions to children
 export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null)
   const [loading, setLoading] = useState(true)
@@ -22,6 +23,7 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  // Fetch current user info using stored access token. If it fails (e.g. token expired), clear tokens and user state.
   const fetchCurrentUser = async () => {
     try {
       const { data } = await authAPI.getMe()
@@ -34,6 +36,7 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Login function: calls API, stores tokens, and fetches user info to update state.
   const login = useCallback(async (email, password) => {
     const { data } = await authAPI.login(email, password)
     localStorage.setItem('access_token',  data.access)
@@ -41,6 +44,7 @@ export function AuthProvider({ children }) {
     await fetchCurrentUser()
   }, [])
 
+  // Logout function: calls API to invalidate refresh token, clears tokens and user state.
   const logout = useCallback(async () => {
     const refresh = localStorage.getItem('refresh_token')
     try { if (refresh) await authAPI.logout(refresh) } catch { /* ignore */ }
@@ -50,6 +54,7 @@ export function AuthProvider({ children }) {
     toast.success('Signed out.')
   }, [])
 
+  // Value provided to context consumers, including user info, loading state, auth functions, and role flags.
   const value = {
     user, loading, login, logout, fetchCurrentUser,
     isStudent: user?.role === 'student',
@@ -61,6 +66,7 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// Custom hook to consume the AuthContext. Ensures it's used within an AuthProvider.
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>')

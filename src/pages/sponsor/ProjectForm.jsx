@@ -12,6 +12,7 @@ import { Save, ArrowLeft } from 'lucide-react'
 
 const INIT = { title:'', description:'', requirements:'', project_type:'internship', status:'open', is_paid:false, stipend:'', tags:'', max_applicants:0, deadline:'' }
 
+// The onChange handler updates the form state whenever an input changes. It handles both text inputs and checkboxes by checking the input type and updating the state accordingly.
 export default function ProjectForm() {
   const { id }   = useParams()
   const isEdit   = Boolean(id)
@@ -22,6 +23,7 @@ export default function ProjectForm() {
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving]   = useState(false)
 
+  // Fetch the existing project data if editing. If an ID is present in the URL params, it means we are editing an existing project, so we fetch its details from the API and populate the form state. A loading state is used to show a spinner while the data is being fetched.
   useEffect(() => {
     if (!isEdit) return
     projectAPI.getProject(id).then(({ data }) => {
@@ -46,6 +48,7 @@ export default function ProjectForm() {
 
   if (loading) return <Spinner text="Loading project…"/>
 
+  // Show loading state while fetching project data if editing. Displays a spinner and message to indicate that the project is being loaded.
   return (
     <div className="page-enter" style={{ maxWidth:700 }}>
       <button onClick={() => navigate(-1)} className="btn btn-secondary" style={{ marginBottom:24 }}><ArrowLeft size={16}/>Back</button>
