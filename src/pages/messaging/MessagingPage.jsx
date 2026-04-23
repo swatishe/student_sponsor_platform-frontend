@@ -132,6 +132,7 @@ export default function MessagingPage() {
     return `${other?.first_name} ${other?.last_name}`.toLowerCase().includes(convSearch.toLowerCase())
   })
 
+  // Main render of the messaging page, including conversations sidebar and chat panel. Shows loading state, empty states, and handles responsive layout for mobile.
   return (
     <div className={styles.container}>
 

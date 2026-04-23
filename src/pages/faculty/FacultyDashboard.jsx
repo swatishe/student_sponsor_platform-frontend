@@ -15,6 +15,7 @@ export default function FacultyDashboard() {
   const [projects, setProjects] = useState([])
   const [loading, setLoading]   = useState(true)
 
+  // Fetch the faculty member's projects on mount. The API call retrieves projects created by the logged-in faculty user, and the response is stored in state. A loading state is used to show a spinner while the data is being fetched.
   useEffect(() => {
     projectAPI.getMyProjects().then(({ data }) => setProjects(data?.results ?? data ?? [])).finally(() => setLoading(false))
   }, [])
@@ -23,6 +24,7 @@ export default function FacultyDashboard() {
 
   const totalApps = projects.reduce((s,p) => s+(p.application_count||0), 0)
 
+  // Main render of the faculty dashboard, showing welcome message, stats cards for projects posted and total applicants, and a list of recent projects with links to manage them and view applicants.
   return (
     <div className="page-enter">
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:32 }}>

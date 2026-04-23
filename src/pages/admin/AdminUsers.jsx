@@ -18,6 +18,7 @@ export default function AdminUsers() {
   const [search, setSearch]   = useState('')
   const [roleFilter, setRole] = useState('')
 
+  // Fetch users with optional role filter. Called on mount and whenever role filter changes.
   const fetchUsers = (role = '') => {
     setLoading(true)
     adminAPI.getUsers(role || undefined)
@@ -27,12 +28,14 @@ export default function AdminUsers() {
 
   useEffect(() => { fetchUsers(roleFilter) }, [roleFilter])
 
+  // Handle user deletion with confirmation. Calls API to delete and refreshes list on success.
   const handleDelete = async (id, name) => {
     if (!confirm(`Permanently delete "${name}"?`)) return
     try { await adminAPI.deleteUser(id); toast.success('User deleted.'); fetchUsers(roleFilter) }
     catch { toast.error('Failed to delete user.') }
   }
 
+  // Handle toggling user active status (deactivate/reactivate). Calls API to update and refreshes list on success.
   const handleToggleActive = async (u) => {
     try {
       await adminAPI.updateUser(u.id, { is_active: !u.is_active })
@@ -41,6 +44,7 @@ export default function AdminUsers() {
     } catch { toast.error('Failed to update.') }
   }
 
+// Filter users based on search query matching first name, last name, or email.
   const filtered = users.filter((u) => {
     const q = search.toLowerCase()
     return (
@@ -50,6 +54,7 @@ export default function AdminUsers() {
     )
   })
 
+  // Main render of the admin user management page, including toolbar with search and role filter, and list of users with action buttons.
   return (
     <div className="page-enter">
       <div className="page-header">

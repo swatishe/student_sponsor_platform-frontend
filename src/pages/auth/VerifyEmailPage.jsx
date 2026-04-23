@@ -25,6 +25,7 @@ export default function VerifyEmailPage() {
 
   const calledRef = useRef(false)   
 
+  // On mount, verify the email using the token from the URL. Sets status based on API response to determine what message to show. Uses a ref to ensure the effect only runs once, preventing multiple API calls if the component re-renders for any reason.
   useEffect(() => {
     if (calledRef.current) return  
     calledRef.current = true       
@@ -34,6 +35,7 @@ export default function VerifyEmailPage() {
       return
     }
 
+    // Call the API to verify the email. The API response status code determines the outcome:
     authAPI.verifyEmail(token)
       .then(() => setStatus('success'))
       .catch((err) => {
@@ -50,6 +52,7 @@ export default function VerifyEmailPage() {
       })
   }, [token])
 
+  // Handle resending verification email. Updates resend state to show sending status and result.
   const handleResend = async (e) => {
     e.preventDefault()
     if (!email.trim()) return

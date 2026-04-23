@@ -15,6 +15,7 @@ export default function useApi(apiFn, deps = [], initial = null) {
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
+  // Memoized fetch function that calls the API and updates state accordingly. It also supports both paginated and non-paginated responses.
   const fetch = useCallback(async (...args) => {
     setLoading(true)
     setError(null)

@@ -16,6 +16,7 @@ export default function MyApplications() {
   const [applications, setApplications] = useState([])
   const [loading, setLoading]           = useState(true)
 
+  // Fetch the student's applications from the API. Called on component mount. The API call retrieves all applications submitted by the logged-in student, and the response is stored in state. A loading state is used to show a spinner while the data is being fetched.
   const fetchApps = () => {
     applicationAPI.getMyApplications()
       .then(({ data }) => setApplications(data?.results ?? data ?? []))
@@ -23,6 +24,7 @@ export default function MyApplications() {
   }
   useEffect(() => { fetchApps() }, [])
 
+  // Handle withdrawing an application with confirmation. Calls API to withdraw and refreshes list on success. Shows a confirmation dialog before withdrawing, and displays a toast notification based on the outcome of the withdraw operation.
   const handleWithdraw = async (id) => {
     if (!confirm('Withdraw this application?')) return
     try { await applicationAPI.withdraw(id); toast.success('Withdrawn.'); fetchApps() }
@@ -30,8 +32,10 @@ export default function MyApplications() {
   }
   // Note: The page displays a list of applications with the project title, application status (using badges), date applied, and a truncated version of the cover letter if available. Each application has buttons to view the project details and to withdraw the application if it's still pending or under review. If there are no applications, it shows an empty state with a call to action to browse projects.
 
+  // Show loading state while fetching applications. Displays a spinner and message to indicate that the applications are being loaded.
   if (loading) return <Spinner text="Loading applications…"/>
 
+  // Show empty state if no applications are found. Displays a message indicating that there are no applications yet and provides a link to browse open projects.
   return (
     <div className="page-enter">
       <div className="page-header">

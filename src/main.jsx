@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './styles/index.css'
 
+// Main entry point of the React application. Renders the App component wrapped in BrowserRouter for routing and Toaster for notifications. Also applies global styles from index.css.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

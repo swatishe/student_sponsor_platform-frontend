@@ -19,6 +19,7 @@ export default function AdminProjects() {
   const [statusFilter, setStatus] = useState('')
   const [typeFilter, setType]     = useState('')
 
+  // Fetch projects with optional filters. Called on mount and whenever filters change.
   const fetchProjects = () => {
     setLoading(true)
     const params = {}
@@ -31,6 +32,7 @@ export default function AdminProjects() {
 
   useEffect(() => { fetchProjects() }, [statusFilter, typeFilter])
 
+  // Handle project deletion with confirmation. Calls API to delete and refreshes list on success.
   const handleDelete = async (id, title) => {
     if (!confirm(`Permanently delete "${title}"? This cannot be undone.`)) return
     try {
@@ -42,6 +44,7 @@ export default function AdminProjects() {
     }
   }
 
+  // Filter projects based on search query matching title or author name.
   const filtered = projects.filter((p) => {
     const q = search.toLowerCase()
     return (
@@ -51,6 +54,7 @@ export default function AdminProjects() {
     )
   })
 
+  // Main render of the admin project management page, including toolbar with filters and list of projects with delete buttons.
   return (
     <div className="page-enter">
       <div className="page-header">

@@ -22,6 +22,7 @@ const ACTION_COLORS = {
 const ACTIONS        = ['', 'create', 'update', 'delete', 'login', 'logout', 'deactivate', 'activate']
 const RESOURCE_TYPES = ['', 'user', 'project', 'application', 'discussion', 'message']
 
+// Badge component for action types (e.g. create, update, delete, login)  with consistent styling.
 function ActionBadge({ action }) {
   const style = ACTION_COLORS[action] ?? { bg: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }
   return (
@@ -41,6 +42,7 @@ function ActionBadge({ action }) {
   )
 }
 
+// Main component for the admin activity log page.  Fetches and displays a paginated list of activity logs with filtering options.
 export default function AdminActivityLog() {
   const [logs, setLogs]         = useState([])
   const [loading, setLoading]   = useState(true)

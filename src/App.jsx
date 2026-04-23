@@ -138,6 +138,7 @@ function AppRoutes() {
   )
 }
 
+// ── Main App Component ─────────────────────────────────────────────────
 export default function App() {
   return (
     <AuthProvider>

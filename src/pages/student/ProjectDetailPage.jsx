@@ -12,6 +12,7 @@ import {
   Send, MessageSquare, CheckCircle, Clock, Bookmark, BookmarkCheck,
 } from 'lucide-react'
 
+// The project detail page component fetches the project data based on the ID from the URL parameters. It displays the project information, including title, description, requirements, tags, and sponsor details. Students can apply for the project by submitting a cover letter, and if they have already applied, it shows the application status. There is also an option to message the sponsor directly from this page. Additionally, students can save or unsave the project to their saved projects list.
 export default function ProjectDetailPage() {
   const { id }   = useParams()
   const { user } = useAuth()
@@ -27,10 +28,12 @@ export default function ProjectDetailPage() {
   const [savingState, setSavingState] = useState(false)
   const [messaging,   setMessaging]   = useState(false)
 
+  // Fetch project details and saved status on mount. The component makes an API call to fetch the project details using the project ID from the URL parameters. If the user is a student, it also checks if the project is already saved in their saved projects list. The responses are stored in state, and a loading state is used to show a spinner while fetching.
   useEffect(() => {
     const fetches = [projectAPI.getProject(id)]
     if (user?.role === 'student') fetches.push(savedAPI.isSaved(id))
 
+      //  Fix 2: Check if the student has already applied to this project and set the applied state accordingly. This is done by fetching the student's applications and checking if any of them match the current project ID. This allows the UI to show the application status instead of the apply button if the student has already applied.
     Promise.all(fetches)
       .then(([projRes, savedRes]) => {
         setProject(projRes.data)
@@ -40,6 +43,7 @@ export default function ProjectDetailPage() {
       .finally(() => setLoading(false))
   }, [id, user])
 
+  // Check if the student has already applied to this project. This effect runs whenever the project data or user changes. It fetches the student's applications and checks if any of them are for the current project ID. If so, it sets the applied state to true, which allows the UI to show the application status instead of the apply button.
   const handleApply = async () => {
     setApplying(true)
     try {
@@ -71,6 +75,7 @@ export default function ProjectDetailPage() {
     }
   }
 
+  // Handle saving or unsaving the project to the student's saved projects list. This function is called when the student clicks the save/unsave button. It checks the current saved state and makes the appropriate API call to either save or unsave the project. It also updates the local state and shows a toast notification based on the outcome of the operation.
   const handleSave = async () => {
     if (savingState) return
     setSavingState(true)
@@ -91,11 +96,13 @@ export default function ProjectDetailPage() {
     }
   }
 
+  // Show loading state while fetching project data. Displays a spinner and message to indicate that the project is being loaded.
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', padding: 40 }}>
       <Clock size={20} /> Loading project…
     </div>
   )
+  // Show error state if project is not found. Displays a message indicating that the project could not be found.
   if (!project) return (
     <div style={{ textAlign: 'center', padding: 60 }}>
       <h3 style={{ color: 'var(--text-muted)' }}>Project not found.</h3>
@@ -105,6 +112,7 @@ export default function ProjectDetailPage() {
   const isStudent = user?.role === 'student'
   const isOpen    = project.status === 'open'
 
+  // Handle form input changes by updating the corresponding field in the form state. This function is called whenever an input value changes, allowing the form state to stay in sync with the user's input.
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <button

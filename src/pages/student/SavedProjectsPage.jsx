@@ -13,6 +13,10 @@ import {
   Calendar, Briefcase, BookmarkCheck, ExternalLink,
 } from 'lucide-react'
 
+// Fix 1: no auto-message — just open the conversation
+// Fix 2: show saved timestamp on each card
+// Fix 3: empty state with call to action to browse projects
+// Fix 4: Action row — all buttons same height, properly aligned
 export default function SavedProjectsPage() {
   const navigate              = useNavigate()
   const [saved,   setSaved]   = useState([])
@@ -28,6 +32,7 @@ export default function SavedProjectsPage() {
 
   useEffect(() => { load() }, [])
 
+  // Handle unsaving a project with optimistic UI update. Removes the project from the saved list immediately for a responsive feel, then calls the API to unsave. If the API call fails, it shows an error message and reloads the saved projects to restore the previous state.
   const handleUnsave = async (projectId) => {
     // Optimistic remove
     setSaved((prev) => prev.filter((s) => s.project.id !== projectId))
@@ -52,6 +57,8 @@ export default function SavedProjectsPage() {
       toast.error('Could not start conversation.')
     }
   }
+
+  // Note: The page displays a list of saved projects with the project title, status, type, sponsor name, deadline, and tags. Each project card includes buttons to view the project details, message the sponsor, and unsave the project. If there are no saved projects, it shows an empty state with a call to action to browse projects. The page also handles loading state while fetching saved projects from the API.
 
   return (
     <div className="page-enter">

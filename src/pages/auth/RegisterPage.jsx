@@ -11,12 +11,14 @@ import toast from 'react-hot-toast'
 import { UserPlus } from 'lucide-react'
 import styles from './Auth.module.css'
 
+// Role options for registration form, with value, label, and description for each role type.
 const ROLES = [
   { value:'student', label:'Student',  desc:'Apply to projects and internships' },
   { value:'sponsor', label:'Sponsor',  desc:'Post projects and hire students' },
   { value:'faculty', label:'Faculty',  desc:'Post research and capstone projects' },
 ]
 
+// Registration page component. Manages form state, handles submission with validation and error handling, and renders the registration form with a decorative left panel.
 export default function RegisterPage() {
   const navigate = useNavigate()
   const [form, setForm]     = useState({ first_name:'', last_name:'', email:'', role:'student', password:'', password2:'' })
@@ -26,6 +28,7 @@ export default function RegisterPage() {
 
   const onChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
 
+  // Handle form submission: validate input, call API to register, and show success message or errors. On success, shows a confirmation message instead of redirecting immediately, allowing the user to resend verification email if needed.
   const onSubmit = async (e) => {
     e.preventDefault()
     if (form.password !== form.password2) { toast.error('Passwords do not match.'); return }
@@ -39,6 +42,7 @@ export default function RegisterPage() {
       extractErrors(err).forEach(m => toast.error(m))
     } finally { setLoading(false) }
   }
+  // Handle resending verification email. Updates resend state to show sending status and result.
   const handleResend = async () => {
   setResend('sending')
   try {

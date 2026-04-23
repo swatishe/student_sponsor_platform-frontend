@@ -11,25 +11,30 @@ import Badge from '../../components/common/Badge'
 import toast from 'react-hot-toast'
 import { Plus, Edit, Trash2, Users, Eye, Briefcase } from 'lucide-react'
 
+// This component is used for both sponsors and faculty to manage their projects, since the functionality is very similar. The main difference is the base path for links, which depends on the user's role. The component fetches the user's projects from the API, displays them in a list with relevant information and action buttons, and allows the user to create new projects or edit/delete existing ones. It also handles loading and empty states gracefully.
 export default function ManageProjects() {
   const { user }  = useAuth()
   const [projects, setProjects] = useState([])
   const [loading, setLoading]   = useState(true)
   const basePath = user?.role === 'faculty' ? '/faculty' : '/sponsor'
 
+  // Fetch the user's projects from the API. Called on component mount. The API call retrieves projects created by the logged-in user (either sponsor or faculty), and the response is stored in state. A loading state is used to show a spinner while the data is being fetched.
   const fetchProjects = () => {
     projectAPI.getMyProjects().then(({ data }) => setProjects(data?.results ?? data ?? [])).finally(() => setLoading(false))
   }
   useEffect(() => { fetchProjects() }, [])
 
+  //  Handle project deletion with confirmation. Calls API to delete and refreshes list on success. Shows a confirmation dialog before deleting, and displays a toast notification based on the outcome of the delete operation.
   const handleDelete = async (id, title) => {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return
     try { await projectAPI.deleteProject(id); toast.success('Project deleted.'); fetchProjects() }
     catch { toast.error('Failed to delete.') }
   }
 
+  // Show loading state while fetching projects. Displays a spinner and message to indicate that the projects are being loaded.
   if (loading) return <Spinner text="Loading projects…"/>
 
+  // Show empty state if no projects are found. Displays a message indicating that there are no projects yet and provides a link to create the first project.
   return (
     <div className="page-enter">
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:28 }}>

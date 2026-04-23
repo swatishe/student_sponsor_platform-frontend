@@ -18,6 +18,7 @@ api.interceptors.request.use((config) => {
   return config
 }, (error) => Promise.reject(error))
 
+// Response interceptor to handle 401 errors and attempt token refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {

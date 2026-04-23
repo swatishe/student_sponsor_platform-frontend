@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext'
 import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import styles from './Auth.module.css'
 
+// Login page component. Manages form state, handles submission with validation and error handling, and renders the login form with a decorative left panel.
 export default function LoginPage() {
   const { login }  = useAuth()
   const navigate   = useNavigate()
@@ -17,11 +18,13 @@ export default function LoginPage() {
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')      // ← inline error, not toast
 
+  //  Handle input changes by updating form state and clearing any existing error messages.
   const handleChange = (e) => {
     setError('')   // clear error when user types
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  // Handle form submission: validate input, call login function from context, and navigate on success. Show inline error messages for validation and API errors.
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -44,6 +47,7 @@ export default function LoginPage() {
     }
   }
 
+// Main render of the login page, including left panel with branding and right panel with login form. Shows inline error messages and handles loading state.
   return (
     <div className={styles.authPage}>
       {/* Left decorative panel */}
