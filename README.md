@@ -53,8 +53,8 @@ Output folder: dist/
 1. Push code to GitHub
 2. Import project in Vercel
 3. Add environment variables:
-   VITE_API_URL=https://your-backend.onrender.com
-   VITE_WS_URL=wss://your-backend.onrender.com
+   VITE_API_URL=https://student-sponsor-platform-backend.onrender.com
+   VITE_WS_URL=wss://student-sponsor-platform-backend.onrender.com
 4. Deploy
 
 ---
