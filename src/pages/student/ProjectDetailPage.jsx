@@ -7,6 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { projectAPI, applicationAPI, messagingAPI, savedAPI } from '../../api/services'
 import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
+import SponsorFacultyProfileModal from '../../components/common/SponsorFacultyProfileModal'
 import {
   Calendar, Briefcase, DollarSign, Users, ArrowLeft,
   Send, MessageSquare, CheckCircle, Clock, Bookmark, BookmarkCheck,
@@ -27,6 +28,8 @@ export default function ProjectDetailPage() {
   const [isSaved,     setIsSaved]     = useState(false)
   const [savingState, setSavingState] = useState(false)
   const [messaging,   setMessaging]   = useState(false)
+  const [viewingPoster, setViewingPoster] = useState(false)
+
 
   // Fetch project details and saved status on mount. The component makes an API call to fetch the project details using the project ID from the URL parameters. If the user is a student, it also checks if the project is already saved in their saved projects list. The responses are stored in state, and a loading state is used to show a spinner while fetching.
   useEffect(() => {
@@ -217,7 +220,7 @@ export default function ProjectDetailPage() {
         )}
 
         {/* Posted by */}
-        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+        {/* <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
             width: 40, height: 40, borderRadius: 10, flexShrink: 0,
             background: 'var(--accent-warning)',
@@ -229,6 +232,30 @@ export default function ProjectDetailPage() {
           <div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 2 }}>POSTED BY</div>
             <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+              {project.created_by?.first_name} {project.created_by?.last_name}
+            </div>
+          </div>
+          <span className={`badge badge-${project.created_by?.role}`} style={{ marginLeft: 4 }}>
+            {project.created_by?.role}
+          </span>
+        </div> */}
+
+         {/* Posted by */}
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+            background: 'var(--accent-warning)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 700, color: 'white', fontSize: '0.9rem',
+          }}>
+            {project.created_by?.first_name?.[0]}{project.created_by?.last_name?.[0]}
+          </div>
+          <div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 2 }}>POSTED BY</div>
+            <div 
+              style={{ fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', color: 'var(--accent-primary)' }}
+              onClick={() => setViewingPoster(true)}
+            >
               {project.created_by?.first_name} {project.created_by?.last_name}
             </div>
           </div>
@@ -290,6 +317,12 @@ export default function ProjectDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Sponsor/Faculty Profile Modal */}
+      {viewingPoster && project.created_by && (
+        <SponsorFacultyProfileModal user={project.created_by} onClose={() => setViewingPoster(false)}/>
+      )}
+      
     </div>
   )
 }
