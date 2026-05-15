@@ -29,12 +29,14 @@ const NAV = {
     { to: '/sponsor/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/sponsor/projects',  icon: Briefcase,       label: 'My Projects' },
     { to: '/messages',          icon: MessageSquare,   label: 'Messages' },
+
   ],
   faculty: [
     { to: '/faculty/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/faculty/projects',  icon: Briefcase,       label: 'My Projects' },
+    { to: '/faculty/projects',  icon: Briefcase,       label: 'Projects' },
     { to: '/messages',          icon: MessageSquare,   label: 'Messages' },
     { to: '/forum',             icon: MessagesSquare,  label: 'Forum'  },
+
 
   ],
   admin: [

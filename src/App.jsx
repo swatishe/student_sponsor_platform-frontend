@@ -38,7 +38,10 @@ import SponsorProfile from './pages/sponsor/SponsorProfile'
 import FacultyDashboard from './pages/faculty/FacultyDashboard'
 import FacultyProjects  from './pages/faculty/FacultyProjects'
 import FacultyProfile            from './pages/faculty/FacultyProfile'                
-import FacultyApplicationsReview from './pages/faculty/FacultyApplicationsReview'    
+import FacultyApplicationsReview from './pages/faculty/FacultyApplicationsReview' 
+// Faculty browse routes
+import BrowsePage       from './pages/faculty/BrowseProjectsPage'
+import BrowseDetailPage from './pages/faculty/BrowseProjectDetailPage'   
 
 
 // Admin
@@ -113,6 +116,8 @@ function AppRoutes() {
         <Route path="/faculty/projects/:id/edit"       element={<PrivateRoute roles={['faculty']}><ProjectForm /></PrivateRoute>} />
         <Route path="/faculty/projects/:id/applicants" element={<PrivateRoute roles={['faculty']}><FacultyApplicationsReview /></PrivateRoute>} />
         <Route path="/faculty/profile"                 element={<PrivateRoute roles={['faculty']}><FacultyProfile /></PrivateRoute>} />
+        <Route path="/faculty/browse"     element={<BrowsePage />} />
+        <Route path="/faculty/browse/:id" element={<BrowseDetailPage />} />
 
         {/* Admin */}
         <Route path="/admin/dashboard" element={<PrivateRoute roles={['admin']}><AdminDashboard /></PrivateRoute>} />

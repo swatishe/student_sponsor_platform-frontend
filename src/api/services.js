@@ -81,6 +81,13 @@ export const messagingAPI = {
   startConversation: (recipientId, message) => api.post('/api/v1/messages/start/', { recipient_id: recipientId, message }),
   getMessages:       (convId)               => api.get(`/api/v1/messages/conversations/${convId}/messages/`),
   sendMessage:       (convId, content)      => api.post(`/api/v1/messages/conversations/${convId}/send/`, { content }),
+  deleteConversation:(convId)               => api.delete(`/api/v1/messages/conversations/${convId}/`),
+
+}
+
+// ── User Search ─────────────────────────────────────────────────────────
+export const userSearchAPI = {
+  search: (q) => api.get('/api/v1/users/search/', { params: { q } }),
 }
 
 // ── Admin ─────────────────────────────────────────────────────────────────
