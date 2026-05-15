@@ -10,6 +10,8 @@ import Badge from '../../components/common/Badge'
 import { timeAgo } from '../../utils/helpers'
 import { Search, Briefcase, Calendar, DollarSign, Users } from 'lucide-react'
 import styles from './Projects.module.css'
+import { useAuth } from '../../context/AuthContext'
+
 
 const TYPES = ['','internship','research','part_time','full_time','freelance','capstone']
 
@@ -20,6 +22,9 @@ export default function ProjectsPage() {
   const [search, setSearch]     = useState('')
   const [type, setType]         = useState('')
   const [paidOnly, setPaid]     = useState(false)
+  const { user } = useAuth()
+  const detailBase = user?.role === 'faculty' ? '/faculty/browse'
+                 : '/student/projects'
 
   // Fetch projects from the API with optional search and filters. This function is called on component mount and whenever the search query, project type filter, or paid-only toggle changes. It constructs the API request parameters based on the current state of the search and filters, makes the API call to fetch projects, and updates the state with the response. A loading state is used to show a spinner while fetching.
   const fetchProjects = useCallback(async () => {
@@ -74,16 +79,19 @@ export default function ProjectsPage() {
         ? <Spinner text="Loading projects…"/>
         : projects.length === 0
           ? <EmptyState icon={Briefcase} title="No projects found" description="Try adjusting your filters or search terms."/>
-          : <div className="grid-2">{projects.map(p => <ProjectCard key={p.id} project={p}/>)}</div>
+          // : <div className="grid-2">{projects.map(p => <ProjectCard key={p.id} project={p}/>)}</div>
+          : <div className="grid-2">{projects.map(p => <ProjectCard key={p.id} project={p} detailBase={detailBase}/>)}</div>
+
       }
     </div>
   )
 }
 
 // Component for rendering individual project cards in the projects listing page. Each card displays the project title, type, sponsor, application count, deadline, and tags. The card is clickable and links to the project detail page. It also shows a badge for the project status and type, and highlights if the project is paid.
-function ProjectCard({ project: p }) {
+function ProjectCard({ project: p, detailBase = '/student/projects' }) {
   return (
-    <Link to={`/student/projects/${p.id}`} style={{ textDecoration:'none' }}>
+    <Link to={`${detailBase}/${p.id}`} style={{ textDecoration:'none' }}>
+
       <div className={styles.card}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10, marginBottom:6 }}>
           <h3 className={styles.cardTitle}>{p.title}</h3>

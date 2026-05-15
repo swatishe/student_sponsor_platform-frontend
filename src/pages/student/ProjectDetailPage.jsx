@@ -3,7 +3,7 @@
 //@author sshende
 
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { projectAPI, applicationAPI, messagingAPI, savedAPI } from '../../api/services'
 import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
@@ -18,7 +18,8 @@ export default function ProjectDetailPage() {
   const { id }   = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
-
+  const location = useLocation()
+  
   const [project,     setProject]     = useState(null)
   const [loading,     setLoading]     = useState(true)
   const [applied,     setApplied]     = useState(false)
@@ -112,14 +113,22 @@ export default function ProjectDetailPage() {
     </div>
   )
 
-  const isStudent = user?.role === 'student'
-  const isOpen    = project.status === 'open'
+  const isStudent    = user?.role === 'student'
+  const isBrowsing   = user?.role === 'faculty' 
+  const isOpen       = project.status === 'open'
+  const canMessage   = project.created_by?.id !== user?.id
 
   // Handle form input changes by updating the corresponding field in the form state. This function is called whenever an input value changes, allowing the form state to stay in sync with the user's input.
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => {
+          if (location.pathname.startsWith('/faculty/browse')) {
+            navigate('/faculty/projects', { state: { tab: 'browse' } })
+          } else {
+            navigate(-1)
+          }
+        }}
         className="btn btn-secondary"
         style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 6 }}
       >
@@ -219,27 +228,6 @@ export default function ProjectDetailPage() {
           </section>
         )}
 
-        {/* Posted by */}
-        {/* <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-            background: 'var(--accent-warning)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 700, color: 'white', fontSize: '0.9rem',
-          }}>
-            {project.created_by?.first_name?.[0]}{project.created_by?.last_name?.[0]}
-          </div>
-          <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 2 }}>POSTED BY</div>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>
-              {project.created_by?.first_name} {project.created_by?.last_name}
-            </div>
-          </div>
-          <span className={`badge badge-${project.created_by?.role}`} style={{ marginLeft: 4 }}>
-            {project.created_by?.role}
-          </span>
-        </div> */}
-
          {/* Posted by */}
         <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
@@ -265,52 +253,71 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Fix 3: Action buttons at bottom of card, not a separate floating section */}
-        {isStudent && (
+        {/* ── Action buttons ── */}
+        {(isStudent || isBrowsing) && (
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, marginTop: 20 }}>
-            {applied ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--accent-success)', fontWeight: 600 }}>
-                <CheckCircle size={20} />
-                Application submitted! We'll notify you of any updates.
-              </div>
-            ) : showForm ? (
-              <div>
-                <h3 style={{ fontSize: '0.95rem', marginBottom: 12 }}>
-                  Cover Letter <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(optional)</span>
-                </h3>
-                <textarea
-                  className="form-input"
-                  rows={4}
-                  placeholder="Briefly explain why you're a great fit for this project…"
-                  value={coverLetter}
-                  onChange={(e) => setCoverLetter(e.target.value)}
-                  style={{ marginBottom: 12 }}
-                />
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button className="btn btn-primary" onClick={handleApply} disabled={applying}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Send size={14} /> {applying ? 'Submitting…' : 'Submit Application'}
-                  </button>
-                  <button className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
+            {isStudent && (
+              applied ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--accent-success)', fontWeight: 600 }}>
+                  <CheckCircle size={20} />
+                  Application submitted! We'll notify you of any updates.
                 </div>
-              </div>
-            ) : (
+              ) : showForm ? (
+                <div>
+                  <h3 style={{ fontSize: '0.95rem', marginBottom: 12 }}>
+                    Cover Letter <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(optional)</span>
+                  </h3>
+                  <textarea
+                    className="form-input"
+                    rows={4}
+                    placeholder="Briefly explain why you're a great fit for this project…"
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    style={{ marginBottom: 12 }}
+                  />
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button className="btn btn-primary" onClick={handleApply} disabled={applying}
+                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Send size={14} /> {applying ? 'Submitting…' : 'Submit Application'}
+                    </button>
+                    <button className="btn btn-secondary" onClick={() => setShowForm(false)}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {isOpen && (
+                    <button
+                      className="btn btn-primary"
+                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                      onClick={() => setShowForm(true)}
+                    >
+                      <Send size={15} /> Apply Now
+                    </button>
+                  )}
+                  {canMessage && (
+                    <button
+                      className="btn btn-secondary"
+                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                      onClick={handleMessage}
+                      disabled={messaging}
+                    >
+                      <MessageSquare size={15} /> {messaging ? 'Opening…' : 'Message Sponsor'}
+                    </button>
+                  )}
+                </div>
+              )
+            )}
+
+            {isBrowsing && canMessage && (
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                {isOpen && (
-                  <button
-                    className="btn btn-primary"
-                    style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-                    onClick={() => setShowForm(true)}
-                  >
-                    <Send size={15} /> Apply Now
-                  </button>
-                )}
                 <button
                   className="btn btn-secondary"
                   style={{ display: 'flex', alignItems: 'center', gap: 6 }}
                   onClick={handleMessage}
                   disabled={messaging}
                 >
-                  <MessageSquare size={15} /> {messaging ? 'Opening…' : 'Message Sponsor'}
+                  <MessageSquare size={15} />
+                  {messaging ? 'Opening…' : `Message ${project.created_by?.role === 'faculty' ? 'Faculty' : 'Sponsor'}`}
                 </button>
               </div>
             )}
@@ -322,7 +329,7 @@ export default function ProjectDetailPage() {
       {viewingPoster && project.created_by && (
         <SponsorFacultyProfileModal user={project.created_by} onClose={() => setViewingPoster(false)}/>
       )}
-      
+
     </div>
   )
 }
