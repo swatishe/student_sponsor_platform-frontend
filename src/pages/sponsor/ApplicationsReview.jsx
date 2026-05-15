@@ -3,12 +3,13 @@
 //@author sshende
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { applicationAPI, projectAPI, messagingAPI } from '../../api/services'
+import { applicationAPI, projectAPI, messagingAPI, profileAPI } from '../../api/services'   
 import Spinner from '../../components/common/Spinner'
 import Avatar from '../../components/common/Avatar'
 import Badge from '../../components/common/Badge'
+import { StudentProfilePanel } from '../../components/common/StudentProfilePanel'             
 import toast from 'react-hot-toast'
-import { ArrowLeft, MessageSquare, CheckCircle, XCircle, Eye } from 'lucide-react'
+import { ArrowLeft, MessageSquare, CheckCircle, XCircle, Eye, User, ChevronDown, ChevronUp } from 'lucide-react'  
 import { timeAgo } from '../../utils/helpers'
 
 // Status options for filtering applications. These correspond to the possible statuses an application can have, such as pending, reviewing, accepted, or rejected. The empty string represents the option to show all applications regardless of status.
@@ -21,11 +22,17 @@ export default function ApplicationsReview() {
   const [apps, setApps]       = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter]   = useState('')
+  // ↓↓↓ added: profile panel state ↓↓↓
+  const [expanded, setExpanded] = useState(null)
+  const [profiles, setProfiles] = useState({})
+  const [loadingProfile, setLoadingProfile] = useState(null)
+  // ↑↑↑ added ↑↑↑
 
   // Fetch project details and applications for the project from the API. Called on component mount and whenever the project ID changes. The project details and applications are stored in state, and a loading state is used to show a spinner while fetching.
   useEffect(() => {
     Promise.all([projectAPI.getProject(id), applicationAPI.getProjectApplications(id)])
       .then(([pRes, aRes]) => { setProject(pRes.data); setApps(aRes.data?.results ?? aRes.data ?? []) })
+      .catch(() => toast.error('Failed to load applicants.'))   // ← added (was missing entirely)
       .finally(() => setLoading(false))
   }, [id])
 
@@ -42,6 +49,28 @@ export default function ApplicationsReview() {
       navigate(`/messages/${data.id}`)
     } catch { toast.error('Could not open conversation.') }
   }
+
+  // ↓↓↓ added: toggle profile panel (called from clickable name) ↓↓↓
+  const toggleProfile = async (app) => {
+    const appId     = app.id
+    const studentId = app.student?.id
+
+    if (expanded === appId) { setExpanded(null); return }
+    setExpanded(appId)
+
+    if (studentId && !profiles[studentId]) {
+      setLoadingProfile(studentId)
+      try {
+        const { data } = await profileAPI.getStudentById(studentId)
+        setProfiles(prev => ({ ...prev, [studentId]: data }))
+      } catch {
+        toast.error('Could not load student profile.')
+      } finally {
+        setLoadingProfile(null)
+      }
+    }
+  }
+  // ↑↑↑ added ↑↑↑
 
   const filtered = filter ? apps.filter(a => a.status===filter) : apps
 
@@ -67,14 +96,34 @@ export default function ApplicationsReview() {
       {filtered.length===0
         ? <div className="empty-state"><h3>No applications {filter ? `with status "${filter}"` : 'yet'}</h3></div>
         : <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-            {filtered.map(app => (
+            {filtered.map(app => {
+              // ↓↓↓ added: per-card profile state ↓↓↓
+              const isOpen  = expanded === app.id
+              const profile = profiles[app.student?.id]
+              // ↑↑↑ added ↑↑↑
+              return (
               <div key={app.id} className="card" style={{ padding:'18px 22px' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:12 }}>
                   <div style={{ flex:1 }}>
                     <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:8 }}>
                       <Avatar user={app.student} size={40} radius={10}/>
                       <div>
-                        <div style={{ fontWeight:600, fontSize:'0.95rem' }}>{app.student?.first_name} {app.student?.last_name}</div>
+                        {/* ↓↓↓ changed: name is now a clickable button ↓↓↓ */}
+                        <button
+                          onClick={() => toggleProfile(app)}
+                          title="View profile"
+                          style={{
+                            background:'none', border:'none', padding:0, cursor:'pointer',
+                            fontWeight:600, fontSize:'0.95rem',
+                            color:'var(--text-primary)', textAlign:'left',
+                            transition:'color 0.15s',
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-primary)'}
+                          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                        >
+                          {app.student?.first_name} {app.student?.last_name}
+                        </button>
+                        {/* ↑↑↑ changed (was: <div style={{ fontWeight:600, fontSize:'0.95rem' }}>...</div>) ↑↑↑ */}
                         <div style={{ fontSize:'0.77rem', color:'var(--text-muted)' }}>{app.student?.email} · Applied {timeAgo(app.applied_at)}</div>
                       </div>
                     </div>
@@ -94,8 +143,23 @@ export default function ApplicationsReview() {
                     </div>
                   </div>
                 </div>
+
+                {/* ↓↓↓ added: expanded profile panel ↓↓↓ */}
+                {isOpen && (
+                  <div style={{ marginTop:14, padding:'16px 18px', background:'rgba(108,99,255,0.05)', borderRadius:'var(--radius-md)', border:'1px solid rgba(108,99,255,0.15)' }}>
+                    {loadingProfile === app.student?.id ? (
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.875rem' }}>Loading profile…</div>
+                    ) : profile ? (
+                      <StudentProfilePanel profile={profile}/>
+                    ) : (
+                      <div style={{ color:'var(--text-muted)', fontSize:'0.875rem' }}>Profile not available.</div>
+                    )}
+                  </div>
+                )}
+                {/* ↑↑↑ added ↑↑↑ */}
               </div>
-            ))}
+              )
+            })}
           </div>
       }
     </div>

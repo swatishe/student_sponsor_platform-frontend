@@ -30,6 +30,8 @@ export const profileAPI = {
   getFacultyProfile:    ()     => api.get('/api/v1/users/profile/faculty/'),
   updateFacultyProfile: (data) => api.patch('/api/v1/users/profile/faculty/', data),
   getStudentById:       (id)   => api.get(`/api/v1/users/students/${id}/`),
+  getSponsorById:    (id) => api.get(`/api/v1/users/sponsors/${id}/`),
+  getFacultyById:    (id) => api.get(`/api/v1/users/faculty/${id}/`),
 }
 
 // ── Projects ─────────────────────────────────────────────────────────────
